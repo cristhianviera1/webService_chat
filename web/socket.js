@@ -18,6 +18,7 @@ class Socket{
 	
 	socketEvents(){
 		this.io.on('connection', (socket) => {
+			console.log("one user enter to this part");
 			socket.on("connection",async(data)=>{
 				if(data.msg != ""){
 					console.log(data.msg);
@@ -25,7 +26,7 @@ class Socket{
 			});
 			/* Get the user's Chat list	*/
 			socket.on(`chat-list`, async (data) => {
-				console.log(data.userId);
+				console.log("someone require the CHAT_LIST");
 				if (data.userId == '') {
 					this.io.emit(`chat-list-response`, {
 						error : true,
@@ -149,6 +150,7 @@ class Socket{
 					userId: socket.request._query['userId'],
 					socketId: socket.id
 				});
+				
 				next();
 			} catch (error) {
           		// Error

@@ -1,7 +1,6 @@
 const queryHandler = require('./../handlers/query-handler');
 const CONSTANTS = require('./../config/constants');
-const passwordHash = require('./../utils/password-hash');
-const bcrypt = require('bcryptjs');
+var bcrypt = require('bcryptjs');
 //Mail
 var nodemailer = require('nodemailer');
 var emisorMail = nodemailer.createTransport({
@@ -73,7 +72,8 @@ class RouteHandler {
 						message: CONSTANTS.USER_LOGIN_FAILED
 					});
 				} else {
-					if (passwordHash.compareHash(data.password, result.password)) {
+					
+					if (bcrypt.compareSync(data.password, result.password)) {
 						await queryHandler.makeUserOnline(result._id);
 						response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
 							error: false,
@@ -127,7 +127,8 @@ class RouteHandler {
 				try {
 					data.online = 'Y';
 					data.socketId = '';
-					data.password = passwordHash.createHash(data.password);
+
+					data.password = bcrypt.hashSync(data.password);
 					const result = await queryHandler.registerUser(data);
 					if (result === null || result === undefined) {
 						response.status(CONSTANTS.SERVER_OK_HTTP_CODE).json({
