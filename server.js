@@ -12,6 +12,13 @@ const socketio = require('socket.io');
 const socketEvents = require('./web/socket'); 
 const routes = require('./web/routes'); 
 const appConfig = require('./config/app-config'); 
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+//Mongoose
+mongoose.connect('mongodb://localhost/kimirina-app')
+.then(db => console.log('DB conectada'))
+.catch(err => console.log(err));
 
 
 class Server{
@@ -20,6 +27,8 @@ class Server{
         this.app = express();
         this.http = http.Server(this.app);
         this.socket = socketio(this.http);
+        this.app.use(bodyParser.json({ limit: '10mb' }));
+        this.app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
     }
 
     appConfig(){        

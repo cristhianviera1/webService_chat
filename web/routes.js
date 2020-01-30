@@ -6,6 +6,10 @@
 'use strict';
 
 const routeHandler = require('./../handlers/route-handler');
+global.__root   = __dirname + '/'; 
+var webroutes = require(__root + '../controllers/routesweb');
+var usuarioController = require(__root + '../controllers/usuarioController');
+var novedadController = require(__root + '../controllers/novedadesController');
 
 class Routes{
 
@@ -25,7 +29,15 @@ class Routes{
 
 		this.app.post('/getMessages', routeHandler.getMessagesRouteHandler);
 
-		this.app.get('*', routeHandler.routeNotFoundHandler);		
+		this.app.use('/webroutes', webroutes);
+
+		this.app.use('/', usuarioController);
+
+		this.app.use('/novedades', novedadController);
+
+		this.app.get('*', routeHandler.routeNotFoundHandler);
+
+		
 	}
 
 	routesConfig(){
