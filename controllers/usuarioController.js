@@ -63,4 +63,14 @@ router.delete('/usuario', async (req, res) => {
   });
 });
 
+
+router.post('/login', async (req, res) => {
+  Usuario.findOne({ correo: req.body.correo }, function (err, usuario) {
+    if (usuario != null) {
+      if (bcrypt.compareSync(req.body.password, usuario.contraseña)) {
+        Usuario.update(,usuario.online)
+      }
+    }
+  })
+});
 module.exports = router;

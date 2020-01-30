@@ -105,6 +105,7 @@ class Socket{
 			socket.on('logout', async (data)=>{
 				try{
 					const userId = data.userId;
+					console.log("Se quiere desconectar: "+ userId);
 					await queryHandler.logout(userId);
 					this.io.to(socket.id).emit(`logout-response`,{
 						error : false,
@@ -118,6 +119,7 @@ class Socket{
 						userid : userId
 					});
 				} catch (error) {
+					console.log(error);
 					this.io.to(socket.id).emit(`logout-response`,{
 						error : true,
 						message: CONSTANTS.SERVER_ERROR_MESSAGE,

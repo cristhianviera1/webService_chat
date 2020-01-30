@@ -54,7 +54,7 @@ class QueryHandler {
 				const [DB, ObjectID] = await this.Mongodb.onConnect();
 				DB.collection('users').findAndModify({
 					_id: ObjectID(userId)
-				}, [], { "$set": { 'online': 'Y' } }, { new: true, upsert: true }, (err, result) => {
+				}, [], { "$set": { 'online': true } }, { new: true, upsert: true }, (err, result) => {
 					DB.close();
 					if (err) {
 						reject(err);
@@ -144,7 +144,7 @@ class QueryHandler {
 			value: {
 				$set: {
 					socketId: socketId,
-					online: 'Y'
+					online: true
 				}
 			}
 		};
@@ -248,22 +248,21 @@ class QueryHandler {
 		});
 	}
 
-	logout(userID, isSocketId) {
+	logout(userID) {
 		const data = {
 			$set: {
-				online: 'N'
+				online: false
 			}
 		};
 		return new Promise(async (resolve, reject) => {
 			try {
-				const [DB, ObjectID] = await this.Mongodb.onConnect();
+				const [DB, ObjectId] = await this.Mongodb.onConnect();
 				let condition = {};
-				if (isSocketId) {
-					condition.socketId = userID;
-				} else {
-					condition._id = ObjectID(userID);
-				}
-				DB.collection('users').update(condition, data, (err, result) => {
+				DB.collection('users').findById(userID,function(err,result){
+					console.log("Esto es lo que busco prro");
+					console.log(result);
+				});
+				DB.collection('users').update({ _id: ObjectId(userID)}, data, (err, result) => {
 					DB.close();
 					if (err) {
 						reject(err);
