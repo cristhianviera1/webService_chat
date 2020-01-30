@@ -21,9 +21,9 @@ router.post('/usuario', async (req, res) => {
       return res.status(404).send('Usuario ya existente.');
     } else {
 
-      var hashedPassword = bcrypt.hashSync(req.body.contraseña, 8);
+      var hashedPassword = bcrypt.hashSync(req.body.password, 8);
       Usuario.create({
-        contraseña: hashedPassword,
+        password: hashedPassword,
         correo: req.body.correo,
         edad: req.body.edad,
         genero: req.body.genero,
@@ -65,12 +65,12 @@ router.delete('/usuario', async (req, res) => {
 
 
 router.post('/usuario/login', async (req, res) => {
-  if(req.body.contraseña == ""||req.body.contraseña == null || req.body.correo == ""||req.body.contraseña == null){
+  if(req.body.password == ""||req.body.password == null || req.body.correo == ""||req.body.password == null){
     return res.status(400).send("Por favor ingrese valores");
   }
   Usuario.findOne({ correo: req.body.correo }, function (err, usuario) {
     if (usuario != null) {
-      if (bcrypt.compareSync(req.body.contraseña, usuario.contraseña)) {
+      if (bcrypt.compareSync(req.body.password, usuario.password)) {
         Usuario.updateOne({_id:usuario._id},{online:true},function(err,res){
           console.log(res);
         });
