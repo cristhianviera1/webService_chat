@@ -8,7 +8,8 @@ const UsuarioSchema = new Schema({
     genero: String,
     rol: String,
     imagen: String,
-    nombre: String
+    nombre: String,
+    online: Boolean
 });
 
 module.exports = mongoose.model('usuarios', UsuarioSchema);

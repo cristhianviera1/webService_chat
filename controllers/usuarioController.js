@@ -64,13 +64,35 @@ router.delete('/usuario', async (req, res) => {
 });
 
 
-router.post('/login', async (req, res) => {
+router.post('/usuario/login', async (req, res) => {
+  if(req.body.contraseña == ""||req.body.contraseña == null || req.body.correo == ""||req.body.contraseña == null){
+    return res.status(400).send("Por favor ingrese valores");
+  }
   Usuario.findOne({ correo: req.body.correo }, function (err, usuario) {
     if (usuario != null) {
-      if (bcrypt.compareSync(req.body.password, usuario.contraseña)) {
-        Usuario.update()
+      if (bcrypt.compareSync(req.body.contraseña, usuario.contraseña)) {
+        Usuario.updateOne({_id:usuario._id},{online:true},function(err,res){
+          console.log(res);
+        });
+        return res.status(200).send("Ha ingresado exitósamente");
+      }else{
+        return res.status(400).send("Las credenciales no son correctas");
       }
     }
   })
+});
+
+router.post('/usuario/logout',async(req,res)=>{
+  if(req.body.id == ""||req.body.id == null){
+    return res.status(400).send("Por favor ingrese valores");
+  }
+  Usuario.findById(req.body.id,function(err,usuario){
+    if(usuario){
+      Usuario.updateOne({_id:usuario._id},{online:false},function(err,res){
+        console.log(res);
+      })
+      res.status(200).send("Has cerrado sesión");
+    }
+  });
 });
 module.exports = router;

@@ -16,7 +16,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 //Mongoose
-mongoose.connect('mongodb://localhost/kimirina-app')
+mongoose.connect('mongodb://localhost/kimirina_app')
 .then(db => console.log('DB conectada'))
 .catch(err => console.log(err));
 
