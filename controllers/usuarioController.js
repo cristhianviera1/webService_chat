@@ -6,13 +6,13 @@ var bcrypt = require('bcryptjs');
 router.get('/usuario', async (req, res) => {
 
     const usuarios = await Usuario.find();
-    res.send(usuarios);
+    res.json(usuarios);
 });
 
 router.get('/usuario/:id', async (req, res) => {
     const { id } = req.params;
     const usuario = await Usuario.findById(id);
-    res.send(usuario);
+    res.json(usuario);
 });
 
 router.post('/usuario', async (req, res) => {
@@ -28,7 +28,8 @@ router.post('/usuario', async (req, res) => {
             correo: req.body.correo,
             edad: req.body.edad,
             genero: req.body.genero,
-            rol: req.body.rol
+            rol: req.body.rol,
+            imagen: req.body.imagen
           },
             function (err, usuario) {
     
