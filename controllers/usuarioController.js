@@ -136,19 +136,3 @@ router.post('/usuario/logout', async (req, res) => {
 
 
 module.exports = router;
-
-class UserChatList {
-  async getChatList(req, res) {
-    const usuario = await Usuario.findById(req.body.id);
-    if (usuario.rol == "usuario") {
-      var chatListBrigadist = await Usuario.find({ "rol": "brigadista" }, { _id: true, nombre: true, online: true, imagen: true });
-      res.status(200).send(chatListBrigadist);
-    } else if (usuario.rol == "brigadista") {
-      var chatListUsers = await Usuario.find({ "rol": "usuario" }, { _id: true, nombre: true, online: true, imagen: true });
-      res.status(200).send(chatListUsers);
-    } else {
-      res.status(400).send("No se ha podido verificar su perfil");
-    }
-  }
-}
-module.exports = new UserChatList();
