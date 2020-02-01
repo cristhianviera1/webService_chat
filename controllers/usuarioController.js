@@ -70,7 +70,7 @@ router.post('/usuario', async (req, res) => {
 
           if (err) return res.status(500).send("Un problema ha ocurrido creando el usuario.");
 
-          res.status(200).send("Usuario creado exitosamente");
+          res.json({status: '200', text: 'Usuario creado exitozamente'});
         });
     }
   });
@@ -79,13 +79,13 @@ router.post('/usuario', async (req, res) => {
 router.put('/usuario/:id', async (req, res) => {
   const { id } = req.params;
   await Usuario.updateOne({ _id: id }, req.body);
-  res.status(200).send("Usuario actulizado con exito");
+  res.json({status: '200', text: 'Usuario actualizado'});
 })
 
 router.delete('/usuario/:id', async (req, res) => {
 
   await Usuario.findByIdAndRemove(req.params.id);
-  res.json({status: 'Empleado eliminado'});
+  res.json({status: '200', text: 'Usuario eliminado'});
 });
 
 
