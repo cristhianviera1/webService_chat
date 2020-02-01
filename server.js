@@ -14,6 +14,7 @@ const routes = require('./web/routes');
 const appConfig = require('./config/app-config'); 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 
 //Mongoose
 mongoose.connect('mongodb://localhost/kimirina_app')
@@ -29,6 +30,10 @@ class Server{
         this.socket = socketio(this.http);
         this.app.use(bodyParser.json({ limit: '10mb' }));
         this.app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+        /*this.app.use(cors({origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        preflightContinue: false,
+        optionsSuccessStatus: 204}));*/
     }
 
     appConfig(){        

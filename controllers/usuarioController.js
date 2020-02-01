@@ -15,7 +15,6 @@ var emisorMail = nodemailer.createTransport({
 });
 
 router.get('/usuario', async (req, res) => {
-
   const usuarios = await Usuario.find();
   res.send(usuarios);
 });
@@ -83,22 +82,10 @@ router.put('/usuario/:id', async (req, res) => {
   res.status(200).send("Usuario actulizado con exito");
 })
 
-router.delete('/usuario', async (req, res) => {
+router.delete('/usuario/:id', async (req, res) => {
 
-  Usuario.findById({ _id: req.body.id }, function (err, usuario) {
-    if (usuario) {
-      return res.status(400).send('El usuario no existe.');
-    } else {
-
-      Usuario.deleteOne({ _id: req.body.id },
-        function (err, usuario) {
-
-          if (err) return res.status(500).send("Un problema ha ocurrido eliminando el usuario.");
-
-          res.status(200).send(usuario);
-        });
-    }
-  });
+  await Usuario.findByIdAndRemove(req.params.id);
+  res.json({status: 'Empleado eliminado'});
 });
 
 
