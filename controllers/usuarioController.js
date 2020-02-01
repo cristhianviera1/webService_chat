@@ -64,6 +64,7 @@ router.post('/usuario', async (req, res) => {
         correo: req.body.correo,
         edad: req.body.edad,
         genero: req.body.genero,
+        online: false,
         rol: tempRol
       },
         function (err, usuario) {
@@ -111,7 +112,7 @@ router.post('/usuario/login', async (req, res) => {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
           console.log(res);
         });
-        return res.status(200).send("Ha ingresado exitósamente");
+        return res.status(200).send("Ha ingresado exitósamente" + usuario._id);
       } else {
         return res.status(400).send("Las credenciales no son correctas");
       }
@@ -133,6 +134,21 @@ router.post('/usuario/logout', async (req, res) => {
   });
 });
 
-router.post('/usuario/chatList', async (req, res) => {
-});
+
 module.exports = router;
+
+class UserChatList {
+  async getChatList(req, res) {
+    const usuario = await Usuario.findById(req.body.id);
+    if (usuario.rol == "usuario") {
+      var chatListBrigadist = await Usuario.find({ "rol": "brigadista" }, { _id: true, nombre: true, online: true, imagen: true });
+      res.status(200).send(chatListBrigadist);
+    } else if (usuario.rol == "brigadista") {
+      var chatListUsers = await Usuario.find({ "rol": "usuario" }, { _id: true, nombre: true, online: true, imagen: true });
+      res.status(200).send(chatListUsers);
+    } else {
+      res.status(400).send("No se ha podido verificar su perfil");
+    }
+  }
+}
+module.exports = new UserChatList();
