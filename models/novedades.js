@@ -8,7 +8,8 @@ const NovedadesSchema = new Schema({
     fechaPublicacion: {
         type: Date,
         default: Date.now
-    }
+    },
+    link: String
 });
 
 module.exports = mongoose.model('novedades', NovedadesSchema);
