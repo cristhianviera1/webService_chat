@@ -63,6 +63,7 @@ router.post('/usuario', async (req, res) => {
         correo: req.body.correo,
         edad: req.body.edad,
         genero: req.body.genero,
+        imagen: req.body.imagen,
         online: false,
         rol: tempRol
       },

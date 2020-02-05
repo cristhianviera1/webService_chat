@@ -4,7 +4,7 @@
 */
 //Monogoose
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/kimirina-app');
+mongoose.connect('mongodb://127.0.0.1:27017/kimirina_app');
  
 "use strict";
 /*requiring mongodb node modules */
