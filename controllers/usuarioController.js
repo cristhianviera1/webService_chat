@@ -15,7 +15,6 @@ var emisorMail = nodemailer.createTransport({
 });
 
 router.get('/usuario', async (req, res) => {
-
   const usuarios = await Usuario.find();
   res.send(usuarios);
 });
@@ -65,6 +64,7 @@ router.post('/usuario', async (req, res) => {
         correo: req.body.correo,
         edad: req.body.edad,
         genero: req.body.genero,
+        imagen: req.body.imagen,
         online: false,
         rol: tempRol
       },
@@ -72,7 +72,7 @@ router.post('/usuario', async (req, res) => {
 
           if (err) return res.status(500).send("Un problema ha ocurrido creando el usuario.");
 
-          res.status(200).send("Usuario creado exitosamente");
+          res.json({status: '200', text: 'Usuario creado exitozamente'});
         });
     }
   });
@@ -81,25 +81,13 @@ router.post('/usuario', async (req, res) => {
 router.put('/usuario/:id', async (req, res) => {
   const { id } = req.params;
   await Usuario.updateOne({ _id: id }, req.body);
-  res.status(200).send("Usuario actulizado con exito");
+  res.json({status: '200', text: 'Usuario actualizado'});
 })
 
-router.delete('/usuario', async (req, res) => {
+router.delete('/usuario/:id', async (req, res) => {
 
-  Usuario.findById({ _id: req.body.id }, function (err, usuario) {
-    if (usuario) {
-      return res.status(400).send('El usuario no existe.');
-    } else {
-
-      Usuario.deleteOne({ _id: req.body.id },
-        function (err, usuario) {
-
-          if (err) return res.status(500).send("Un problema ha ocurrido eliminando el usuario.");
-
-          res.status(200).send(usuario);
-        });
-    }
-  });
+  await Usuario.findByIdAndRemove(req.params.id);
+  res.json({status: '200', text: 'Usuario eliminado'});
 });
 
 

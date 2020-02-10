@@ -17,31 +17,18 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     const novedad = new Novedad(req.body);
     await novedad.save();
-    res.status(200).send("Creado exitosamente");
+    res.json({status: '200', text: 'Novedad creada exitosamente'});
 })
 
 router.put('/:id', async (req, res) => {
     const { id } = req.params;
     await Novedad.updateOne({_id : id}, req.body);
-    res.status(200).send("Actulizado con exito");
+    res.json({status: '200', text: 'Novedad actualizada'});
 })
 
-router.delete('/', async (req, res) => {
-
-    Novedad.findById({ _id: req.body.id }, function (err, novedad) {
-        if (novedad) {
-          return res.status(400).send('La novedad no existe.');
-        } else {
-    
-            Novedad.deleteOne({_id: req.body.id},
-            function (err, novedad) {
-
-                if (err) return res.status(500).send("Un problema ha ocurrido eliminando.");
-                
-                res.status(200).send(novedad);
-            });
-        }
-      });
+router.delete('/:id', async (req, res) => {
+    await Novedad.findByIdAndRemove(req.params.id);
+  res.json({status: '200', text: 'Novedad eliminada'});
 });
 
 module.exports = router;
