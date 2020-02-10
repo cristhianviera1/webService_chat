@@ -20,6 +20,7 @@ router.get('/usuario', async (req, res) => {
   res.send(usuarios);
 });
 
+
 router.get('/usuario/:id', async (req, res) => {
   const { id } = req.params;
   const usuario = await Usuario.findById(id);
@@ -112,7 +113,7 @@ router.post('/usuario/login', async (req, res) => {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
           console.log(res);
         });
-        return res.status(200).send("Ha ingresado exitósamente" + usuario._id);
+        return res.status(200).send({"id":usuario._id,"nombre":usuario.nombre,"correo":usuario.correo,"imagen":usuario.imagen,"edad":usuario.edad,"genero":usuario.genero});
       } else {
         return res.status(400).send("Las credenciales no son correctas");
       }
@@ -134,5 +135,22 @@ router.post('/usuario/logout', async (req, res) => {
   });
 });
 
+router.post('/usuario/updPassword', async (req, res) => {
+  if (req.body.id == "" || req.body.id == null) {
+    return res.status(400).send("Por favor ingrese valores");
+  }
+  Usuario.findById(req.body.id, function (err, usuario) {
+    if (usuario) {
+      var hashedPassword = bcrypt.hashSync(req.body.password, 8);
+      Usuario.updateOne({ _id: usuario._id }, { password: hashedPassword}, function (err, res) {
+        console.log(res);
+        if(err){
+          res.status(404).send("Algo ha fallado");
+        }
+      })
+      res.status(200).send("Has actualizado la contraseña");
+    }
+  });
+});
 
 module.exports = router;
