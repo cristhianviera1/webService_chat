@@ -50,7 +50,6 @@ class Server {
         this.socket.on("connection", (userSocket) => {
             userSocket.on("send_message", async (data) => {
                 var chat = JSON.parse(data);
-                console.log(chat.message);
                 Chat.create({
                     userIdSend: chat.userIdSend,
                     userIdReceive: chat.userIdReceive,
@@ -61,9 +60,15 @@ class Server {
                 userSocket.broadcast.emit("receive_message", data)
             });
             userSocket.on("getChats", async (data) => {
+                var userRol = await Usuario.findById(data);
                 console.log(data);
-                var res = await Usuario.find({ rol: "brigadista" }, { password: false, edad: false });
-                userSocket.emit("getChats_response", res)
+                console.log(userRol);
+                if(userRol.rol == "usuario"){
+                    console.log("El solicitante es usuario");
+                    var response = await Usuario.find({"rol":"brigadista"},{"password":false});
+                    userSocket.emit("getChats_response", response)
+                }
+                //var res = await Usuario.find({ rol: "brigadista" }, { password: false, edad: false });
             })
         })
     }

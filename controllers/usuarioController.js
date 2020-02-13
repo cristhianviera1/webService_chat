@@ -101,7 +101,7 @@ router.post('/usuario/login', async (req, res) => {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
           console.log(res);
         });
-        return res.status(200).send({"id":usuario._id,"nombre":usuario.nombre,"correo":usuario.correo,"imagen":usuario.imagen,"edad":usuario.edad,"genero":usuario.genero});
+        return res.status(200).send({"id":usuario._id,"nombre":usuario.nombre,"correo":usuario.correo,"imagen":usuario.imagen,"edad":usuario.edad,"genero":usuario.genero,"rol":usuario.rol});
       } else {
         return res.status(400).send("Las credenciales no son correctas");
       }
