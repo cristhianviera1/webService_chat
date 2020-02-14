@@ -12,13 +12,34 @@ const FormularioSchema = new Schema({
         type: String,
         default: dateGuayaquil
     },
-    pregunta1: String,
-    pregunta2: String,
-    pregunta3: String,
-    pregunta4: String,
-    pregunta5: String,
-    pregunta6: String,
-    pregunta7: String
+    pregunta1: {
+        type: String,
+        default: ""
+    },
+    pregunta2: {
+        type: String,
+        default: ""
+    },
+    pregunta3: {
+        type: String,
+        default: ""
+    },
+    pregunta4: {
+        type: String,
+        default: ""
+    },
+    pregunta5: {
+        type: String,
+        default: ""
+    },
+    pregunta6: {
+        type: String,
+        default: ""
+    },
+    pregunta7: {
+        type: String,
+        default: ""
+    }
 });
 
 module.exports = mongoose.model('formulario', FormularioSchema);

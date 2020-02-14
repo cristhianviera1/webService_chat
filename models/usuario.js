@@ -4,11 +4,26 @@ const Schema = mongoose.Schema;
 const UsuarioSchema = new Schema({
     password: String,
     correo: String,
-    edad: String,
-    genero: String,
-    rol: String,
-    imagen: String,
-    nombre: String,
+    edad:  {
+        type: String,
+        default: ""
+    },
+    genero:  {
+        type: String,
+        default: ""
+    },
+    rol:  {
+        type: String,
+        default: ""
+    },
+    imagen:  {
+        type: String,
+        default: ""
+    },
+    nombre:  {
+        type: String,
+        default: ""
+    },
     online: Boolean
 });
 
