@@ -101,7 +101,7 @@ router.post('/usuario/login', async (req, res) => {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
           console.log(res);
         });
-        return res.status(200).send({"id":usuario._id,"nombre":usuario.nombre,"correo":usuario.correo,"imagen":usuario.imagen,"edad":usuario.edad,"genero":usuario.genero,"rol":usuario.rol});
+        return res.status(200).send({"_id":usuario._id,"nombre":usuario.nombre,"correo":usuario.correo,"imagen":usuario.imagen,"edad":usuario.edad,"genero":usuario.genero,"rol":usuario.rol});
       } else {
         return res.status(400).send("Las credenciales no son correctas");
       }
@@ -118,7 +118,7 @@ router.post('/usuario/logout', async (req, res) => {
       Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
         console.log(res);
       })
-      res.status(200).send("Has cerrado sesión");
+      res.json({status: '200', text: 'Se ha cerrado la session'});
     }
   });
 });
