@@ -3,6 +3,14 @@ const router = express.Router();
 const Usuario = require('../models/usuario');
 var bcrypt = require('bcryptjs');
 var nodemailer = require('nodemailer');
+const upload = require('../public/uploadMiddleware');
+const Resize = require('../public/resize');
+const path = require('path');
+
+var urlimage = null;
+
+
+
 var emisorMail = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 587,
@@ -26,8 +34,8 @@ router.get('/usuario/:id', async (req, res) => {
   res.send(usuario);
 });
 
-router.post('/usuario', async (req, res) => {
-  Usuario.findOne({ correo: req.body.correo }, function (err, usuario) {
+router.post('/usuario', upload.single('image'), async function(req, res) {
+  Usuario.findOne({ correo: req.body.correo }, async function (err, usuario) {
     if (usuario) {
       return res.status(404).send('Usuario ya existente.');
     } else {
@@ -58,13 +66,31 @@ router.post('/usuario', async (req, res) => {
       } else {
         tempRol = req.body.rol;
       }
+      //Imagen------------------------------------------------------------------
+      if (!req.file) {
+        this.urlimage = "";
+      } else {
+          console.log("Este es el buffer",req.file.buffer);
+          const imagePath = path.join(__dirname, '../public/images');
+          const fileUpload = new Resize(imagePath);
+
+          const filename = await fileUpload.save(req.file.buffer);
+          this.urlimage = "http://192.168.1.8:4000/images/"+filename;
+      }
+
+      if (urlimage = null) {
+          return res.status(500).json({error: 'No se ha podido subir la imagen'})
+      }
+      //Fin imagen ---------------------------------------------------------------------
+
+
       Usuario.create({
         nombre: req.body.nombre,
         password: tempPasword,
         correo: req.body.correo,
         edad: req.body.edad,
         genero: req.body.genero,
-        imagen: req.body.imagen,
+        imagen: this.urlimage.toString(),
         online: false,
         rol: tempRol
       },
@@ -78,10 +104,39 @@ router.post('/usuario', async (req, res) => {
   });
 })
 
-router.put('/usuario/:id', async (req, res) => {
+router.put('/usuario/:id', upload.single('image'), async function(req, res) {
   const { id } = req.params;
+
+  if(!req.file) {
+    this.urlimage = "";
+  } else {
+      console.log("Este es el buffer",req.file.buffer);
+      const imagePath = path.join(__dirname, '../public/images');
+      const fileUpload = new Resize(imagePath);
+
+      const filename = await fileUpload.save(req.file.buffer);
+      this.urlimage = "http://192.168.1.8:4000/images/"+filename;
+  }
+
+  if (urlimage = null) {
+      return res.status(500).json({error: 'No se ha podido subir la imagen'})
+  }
+
+  Producto.updateOne({
+    _id: id,
+    nombre: req.body.nombre,
+    password: tempPasword,
+    correo: req.body.correo,
+    edad: req.body.edad,
+    genero: req.body.genero,
+    imagen: this.urlimage.toString(),
+    rol: req.body.rol
+  })
+
+  return res.status(200).json({bien: 'Usuario actualizado exitosamente'})
+  /*
   await Usuario.updateOne({ _id: id }, req.body);
-  res.json({status: '200', text: 'Usuario actualizado'});
+  res.json({status: '200', text: 'Usuario actualizado'});*/
 })
 
 router.delete('/usuario/:id', async (req, res) => {
