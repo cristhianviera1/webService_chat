@@ -41,11 +41,11 @@ router.post('/', upload.single('image'), async function(req, res) {
         this.urlimage = "";
     } else {
         console.log("Este es el buffer",req.file.buffer);
-        const imagePath = path.join(__dirname, '../public/images');
+        const imagePath = path.join(__dirname, '../public/images/novedades');
         const fileUpload = new Resize(imagePath);
 
         const filename = await fileUpload.save(req.file.buffer);
-        this.urlimage = "http://192.168.1.8:4000/images/"+filename;
+        this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/novedades/"+filename;
     }
 
     if (urlimage = null) {
@@ -77,7 +77,7 @@ router.put('/:id', upload.single('image'), async function(req, res) {
         const fileUpload = new Resize(imagePath);
 
         const filename = await fileUpload.save(req.file.buffer);
-        this.urlimage = "http://192.168.1.8:4000/images/"+filename;
+        this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/novedades/"+filename;
     }
 
     if (urlimage = null) {

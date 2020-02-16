@@ -29,7 +29,7 @@ router.post('/', upload.single('image'), async function(req, res) {
         const fileUpload = new Resize(imagePath);
 
         const filename = await fileUpload.save(req.file.buffer);
-        this.urlimage = "http://192.168.1.8:4000/images/"+filename;
+        this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/productos/"+filename;
     }
 
     if (urlimage = null) {
@@ -64,7 +64,7 @@ router.put('/:id', upload.single('image'), async function(req, res)  {
         const fileUpload = new Resize(imagePath);
 
         const filename = await fileUpload.save(req.file.buffer);
-        this.urlimage = "http://192.168.1.8:4000/images/"+filename;
+        this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/productos/"+filename;
     }
 
     if (urlimage = null) {
