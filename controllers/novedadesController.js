@@ -1,6 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const Novedad = require('../models/novedades');
+const upload = require('../public/uploadMiddleware');
+const Resize = require('../public/resize');
+const path = require('path');
+
+//Subir imagenes
+router.post('/images', upload.single('image'), async function(req, res) {
+    console.log("Este es el buffer",req.file.buffer);
+    const imagePath = path.join(__dirname, '../public/images');
+    const fileUpload = new Resize(imagePath);
+
+    if(!req.file) {
+        res.status(401).json({error: 'Por favor proporciona una imagen'});
+    }
+
+    const filename = await fileUpload.save(req.file.buffer);
+    return res.status(200).json({url: "http://192.168.1.8:4000/images/"+filename});
+    
+})
+
+//-------------------------------------
 
 router.get('/', async (req, res) => {
 

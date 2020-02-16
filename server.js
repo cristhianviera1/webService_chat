@@ -34,6 +34,7 @@ class Server {
         this.socket = socketio(this.http);
         this.app.use(bodyParser.json({ limit: '10mb' }));
         this.app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
+        this.app.use(express.static('public'));
         /*this.app.use(cors({origin: '*',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         preflightContinue: false,
