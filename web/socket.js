@@ -26,7 +26,6 @@ class Socket{
 			});
 			/* Get the user's Chat list	*/
 			socket.on(`chat-list`, async (data) => {
-				console.log("someone require the CHAT_LIST");
 				if (data.userId == '') {
 					this.io.emit(`chat-list-response`, {
 						error : true,
@@ -97,15 +96,12 @@ class Socket{
 					}
 				}				
 			});
-
-
 			/**
 			* Logout the user
 			*/
 			socket.on('logout', async (data)=>{
 				try{
 					const userId = data.userId;
-					console.log("Se quiere desconectar: "+ userId);
 					await queryHandler.logout(userId);
 					this.io.to(socket.id).emit(`logout-response`,{
 						error : false,
