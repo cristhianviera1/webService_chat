@@ -10,7 +10,8 @@ global.__root   = __dirname + '/';
 var webroutes = require(__root + '../controllers/routesweb');
 var usuarioController = require(__root + '../controllers/usuarioController');
 var novedadController = require(__root + '../controllers/novedadesController');
-var productoController = require(__root + '../controllers/productosController')
+var productoController = require(__root + '../controllers/productosController');
+var formularioController = require(__root + '../controllers/formularioController');
 
 class Routes{
 
@@ -37,6 +38,8 @@ class Routes{
 		this.app.use('/novedades', novedadController);
 
 		this.app.use('/productos', productoController);
+
+		this.app.use('/formulario', formularioController);
 
 		this.app.get('*', routeHandler.routeNotFoundHandler);
 
