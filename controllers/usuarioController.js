@@ -71,7 +71,7 @@ router.post('/usuario', upload.single('image'), async function(req, res) {
         this.urlimage = "";
       } else {
           console.log("Este es el buffer",req.file.buffer);
-          const imagePath = path.join(__dirname, '../public/images');
+          const imagePath = path.join(__dirname, '../public/images/usuarios');
           const fileUpload = new Resize(imagePath);
 
           const filename = await fileUpload.save(req.file.buffer);
@@ -111,7 +111,7 @@ router.put('/usuario/:id', upload.single('image'), async function(req, res) {
     this.urlimage = "";
   } else {
       console.log("Este es el buffer",req.file.buffer);
-      const imagePath = path.join(__dirname, '../public/images');
+      const imagePath = path.join(__dirname, '../public/images/usuarios');
       const fileUpload = new Resize(imagePath);
 
       const filename = await fileUpload.save(req.file.buffer);
