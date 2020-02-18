@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/usuario');
+const Chat = require('../models/chat');
 var bcrypt = require('bcryptjs');
 var nodemailer = require('nodemailer');
 const upload = require('../public/uploadMiddleware');
@@ -96,9 +97,9 @@ router.post('/usuario', upload.single('image'), async function(req, res) {
       },
         function (err, usuario) {
 
-          if (err) return res.status(500).send("Un problema ha ocurrido creando el usuario.");
+          if (err) return res.status(500).send("Un problema ha ocurrido creando el usuario.\n" + err);
 
-          res.json({status: '200', text: 'Usuario creado exitozamente'});
+          res.json({ status: '200', text: 'Usuario creado exitosamente' });
         });
     }
   });
@@ -138,11 +139,41 @@ router.put('/usuario/:id', upload.single('image'), async function(req, res) {
   await Usuario.updateOne({ _id: id }, req.body);
   res.json({status: '200', text: 'Usuario actualizado'});*/
 })
+//getChats
+router.post('/usuario/chats', async (req, res) => {
+  if (req.body.id === "" || req.body.id === null || req.body.id === undefined) {
+    return res.status(400).send("Por favor ingrese valores");
+  }
+  Chat.find({ $or: [{ "userIdSend": new ObjectId(req.body.id) }, { "userIdReceive": new ObjectId(req.body.id) }] }, function (err, chats) {
+    if (err) {
+      return res.status(500).send("No se ha podido recuperar los chats");
+    }
+    return res.status(200).send(chats);
+  });
+
+});
+router.post('/usuario/chat', async (req, res) => {
+  if (req.body.id === "" || req.body.id === null || req.body.id === undefined || req.body.idReceive === "" || req.body.idReceive === null || req.body.idReceive === undefined) {
+    return res.status(400).send("Por favor ingrese valores");
+  }
+  Chat.find({
+    $or: [
+      { $and: [{ "userIdSend": new ObjectId(req.body.id) }, { "userIdReceive": new ObjectId(req.body.idReceive) }] },
+      { $and: [{ "userIdReceive": new ObjectId(req.body.id) }, { "userIdSend": new ObjectId(req.body.idReceive) }] }]
+  }, function (err, chats) {
+    if (err) {
+      return res.status(500).send("No se ha podido recuperar los chats");
+    }
+    return res.status(200).send(chats);
+  });
+
+});
+
 
 router.delete('/usuario/:id', async (req, res) => {
 
   await Usuario.findByIdAndRemove(req.params.id);
-  res.json({status: '200', text: 'Usuario eliminado'});
+  res.json({ status: '200', text: 'Usuario eliminado' });
 });
 
 
@@ -156,7 +187,7 @@ router.post('/usuario/login', async (req, res) => {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
           console.log(res);
         });
-        return res.status(200).send({"_id":usuario._id,"nombre":usuario.nombre,"correo":usuario.correo,"imagen":usuario.imagen,"edad":usuario.edad,"genero":usuario.genero,"rol":usuario.rol});
+        return res.status(200).send({ "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol });
       } else {
         return res.status(400).send("Las credenciales no son correctas");
       }
@@ -185,9 +216,9 @@ router.post('/usuario/updPassword', async (req, res) => {
   Usuario.findById(req.body.id, function (err, usuario) {
     if (usuario) {
       var hashedPassword = bcrypt.hashSync(req.body.password, 8);
-      Usuario.updateOne({ _id: usuario._id }, { password: hashedPassword}, function (err, res) {
+      Usuario.updateOne({ _id: usuario._id }, { password: hashedPassword }, function (err, res) {
         console.log(res);
-        if(err){
+        if (err) {
           res.status(404).send("Algo ha fallado");
         }
       })
