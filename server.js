@@ -75,7 +75,6 @@ class Server {
                         message: chat.message
                     });
                 }
-                //userSocket.broadcast.emit("receive_message", chat)
             });
             userSocket.on("logout", async (data) => {
                 var usuario = await Usuario.findById(data["userId"]);
