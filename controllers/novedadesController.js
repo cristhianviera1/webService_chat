@@ -52,7 +52,7 @@ router.post('/', upload.single('image'), async function(req, res) {
         return res.status(500).json({error: 'No se ha podido subir la imagen'})
     }
 
-    Novedad.create({
+    await Novedad.create({
         titulo: req.body.titulo,
         descripcion: req.body.descripcion,
         imagen: this.urlimage.toString(),
@@ -69,11 +69,11 @@ router.post('/', upload.single('image'), async function(req, res) {
 router.put('/:id', upload.single('image'), async function(req, res) {
     const { id } = req.params;
 
-    if(!req.file) {
+    if (!req.file) {
         this.urlimage = "";
     } else {
         console.log("Este es el buffer",req.file.buffer);
-        const imagePath = path.join(__dirname, '../public/images');
+        const imagePath = path.join(__dirname, '../public/images/novedades');
         const fileUpload = new Resize(imagePath);
 
         const filename = await fileUpload.save(req.file.buffer);
@@ -84,18 +84,15 @@ router.put('/:id', upload.single('image'), async function(req, res) {
         return res.status(500).json({error: 'No se ha podido subir la imagen'})
     }
 
-    await Novedad.updateOne({
-        _id : id,
+    await Novedad.updateOne({_id: id},{
         titulo: req.body.titulo,
         descripcion: req.body.descripcion,
-        imagen: this.urlimage.toString,
+        imagen: this.urlimage.toString(),
         link: req.body.link
     })
 
-    return res.status(200).json({bien: 'Novedad actualizada exitosamente'})
+    return res.status(200).json({bien: 'Novedad creada exitosamente'})
 
-    /*await Novedad.updateOne({_id : id}, req.body);
-    res.json({status: '200', text: 'Novedad actualizada'});*/
 })
 
 router.delete('/:id', async (req, res) => {

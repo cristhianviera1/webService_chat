@@ -25,7 +25,7 @@ router.post('/', upload.single('image'), async function(req, res) {
         this.urlimage = "";
     } else {
         console.log("Este es el buffer",req.file.buffer);
-        const imagePath = path.join(__dirname, '../public/images');
+        const imagePath = path.join(__dirname, '../public/images/productos');
         const fileUpload = new Resize(imagePath);
 
         const filename = await fileUpload.save(req.file.buffer);
@@ -36,7 +36,7 @@ router.post('/', upload.single('image'), async function(req, res) {
         return res.status(500).json({error: 'No se ha podido subir la imagen'})
     }
 
-    Producto.create({
+    await Producto.create({
         titulo: req.body.titulo,
         descripcion: req.body.descripcion,
         imagen: this.urlimage.toString(),
@@ -60,7 +60,7 @@ router.put('/:id', upload.single('image'), async function(req, res)  {
         this.urlimage = "";
     } else {
         console.log("Este es el buffer",req.file.buffer);
-        const imagePath = path.join(__dirname, '../public/images');
+        const imagePath = path.join(__dirname, '../public/images/productos');
         const fileUpload = new Resize(imagePath);
 
         const filename = await fileUpload.save(req.file.buffer);
@@ -71,14 +71,13 @@ router.put('/:id', upload.single('image'), async function(req, res)  {
         return res.status(500).json({error: 'No se ha podido subir la imagen'})
     }
 
-    Producto.updateOne({
-        _id: id,
+    await Producto.updateOne({_id: id},{
         titulo: req.body.titulo,
         descripcion: req.body.descripcion,
         imagen: this.urlimage.toString(),
         link: req.body.link,
         precio: req.body.precio,
-        obserbaciones: req.body.obserbaciones
+        observaciones: req.body.observaciones
     })
 
     return res.status(200).json({bien: 'Producto actualizado exitosamente'})

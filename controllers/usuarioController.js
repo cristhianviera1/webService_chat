@@ -123,10 +123,11 @@ router.put('/usuario/:id', upload.single('image'), async function(req, res) {
       return res.status(500).json({error: 'No se ha podido subir la imagen'})
   }
 
-  Producto.updateOne({
-    _id: id,
+  var hashedPassword = bcrypt.hashSync(req.body.password, 8);
+
+  await Usuario.updateOne({_id: id},{
     nombre: req.body.nombre,
-    password: tempPasword,
+    password: hashedPassword,
     correo: req.body.correo,
     edad: req.body.edad,
     genero: req.body.genero,
