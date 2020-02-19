@@ -19,6 +19,8 @@ const cors = require('cors')
 
 const Usuario = require('./models/usuario');
 const Chat = require('./models/chat');
+const ChatList = require('./models/chatList');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 //Mongoose
 mongoose.connect('mongodb://localhost/kimirina_app')
@@ -50,6 +52,7 @@ class Server {
 
         new routes(this.app).routesConfig();
         this.sockets.on("connection", (userSocket) => {
+            //creación de socket para cada usuario
             userSocket.on("loginRoom", (data) => {
                 if (data in this.users) {
                     console.log("Ya has abierto :v ");
@@ -58,6 +61,7 @@ class Server {
                     this.users[nickname] = this.sockets;
                 }
             });
+            //Socket para el envio de mensajes
             userSocket.on("send_message", async (data) => {
                 var chat = JSON.parse(data);
                 Chat.create({
@@ -67,6 +71,24 @@ class Server {
                 }, function (err, chat) {
                     if (err) { return res.status(500).send("Un error al guardar el chat") }
                 });
+                Usuario.findById(chat.userIdReceive, function (err, res) {
+                    var user = res;
+                    if (user.rol == "brigadista") {
+                        ChatList.find({ $and: [{ "userId": user._id }, { "userToChat": chat.userIdSend }] }, function (err, res) {
+                            if (res.length == 1) {
+                                ChatList.updateOne({ _id: res[0]._id, lastMessage: chat.message }, function (err, result) { });
+                            }
+                            if (res.length == 0) {
+                                console.log("not found");
+                                ChatList.create({
+                                    userId: chat.userIdReceive,
+                                    userToChat: chat.userIdSend,
+                                    lastMessage: chat.message
+                                });
+                            }
+                        });
+                    }
+                });
                 if (chat.userIdReceive in this.users) {
                     console.log(chat.userIdReceive);
                     this.users[chat.userIdReceive].emit("receive_message", {
@@ -75,29 +97,35 @@ class Server {
                         message: chat.message
                     });
                 }
-                //userSocket.broadcast.emit("receive_message", chat)
             });
-            userSocket.on("logout", async (data) => {
-                var usuario = await Usuario.findById(data["userId"]);
-                Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
-                    console.log(res);
-                });
-                if (err) {
-                    res.status(500).send("Error en el servidor");
-                }
-                return res.status(200).send({ "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol });
-            });
-            userSocket.on("getChats", async (data) => {
+            userSocket.on("getUserList", async (data) => {
                 var userRol = await Usuario.findById(data);
                 var response
                 if (userRol.rol == "usuario") {
                     response = await Usuario.find({ "rol": "brigadista" }, { "password": false });
                 } else if (userRol.rol == "brigadista") {
-                    response = await Usuario.find({ "rol": "usuario" }, { "password": false });
+                    var tmpResponse = await ChatList.find({ "userId": userRol._id });
+                    response = new Array;
+                    for (var obj in tmpResponse) {
+                        response.push(await Usuario.findOne({ _id: new ObjectId(tmpResponse[obj].userToChat) }, { "password": false }));
+                    }
                 }
                 userSocket.emit("getChats_response", response)
-                //var res = await Usuario.find({ rol: "brigadista" }, { password: false, edad: false });
-            })
+            });
+
+            //socket para desloguearse e inhabilitar usuario como activo
+            userSocket.on("logout", async (data) => {
+                var usuario = await Usuario.findById(data["userId"]);
+                Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
+                    console.log(res);
+                });
+                console.log(this.users);
+                for(var usr in this.users){
+                    console.log(this.user[usr]);
+                    this.users[usr].emit("updateOfUser", "ALV PRRO DEBE RETORNAR ALGO");
+                }
+                //sockets.broadcast.emit("updateOfUser", "ALV PRRO DEBE RETORNAR ALGO");
+            });
         })
     }
     /* Including app Routes ends*/
