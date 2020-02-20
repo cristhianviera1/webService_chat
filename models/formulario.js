@@ -37,7 +37,7 @@ const FormularioSchema = new Schema({
         default: ""
     },
     pregunta7: {
-        type: String,
+        type: Array,
         default: ""
     }
 });
