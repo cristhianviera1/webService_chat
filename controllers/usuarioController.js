@@ -138,9 +138,31 @@ router.put('/usuario/:id', upload.single('image'), async function(req, res) {
   })
 
   return res.status(200).json({bien: 'Usuario actualizado exitosamente'})
-  /*
-  await Usuario.updateOne({ _id: id }, req.body);
-  res.json({status: '200', text: 'Usuario actualizado'});*/
+})
+router.put('/usuario/imagen/:id', upload.single('image'), async function(req, res) {
+  const { id } = req.params;
+
+  if(!req.file) {
+    this.urlimage = "";
+  } else {
+      console.log("Este es el buffer",req.file.buffer);
+      const imagePath = path.join(__dirname, '../public/images/usuarios');
+      const fileUpload = new Resize(imagePath);
+
+      const filename = await fileUpload.save(req.file.buffer);
+      this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/usuarios/"+filename;
+  }
+
+  if (urlimage = null) {
+      return res.status(500).json({error: 'No se ha podido subir la imagen'})
+  }
+
+
+  await Usuario.updateOne({_id: id},{
+    imagen: this.urlimage.toString(),
+  })
+
+  return res.status(200).json({bien: 'Usuario actualizado exitosamente'})
 })
 //getChats
 router.post('/usuario/chats', async (req, res) => {
@@ -192,8 +214,10 @@ router.post('/usuario/login', async (req, res) => {
         });
         return res.status(200).send({ "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol });
       } else {
-        return res.status(400).send("Las credenciales no son correctas");
+        return res.status(400).send("error");
       }
+    }else{
+      return res.status(400).send("error");
     }
   })
 });

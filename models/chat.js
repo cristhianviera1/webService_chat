@@ -8,6 +8,7 @@ const ChatSchema = new Schema({
     userIdReceive: {
         type: Schema.Types.ObjectId, ref: 'usuarios'
     },
+    imagen: Boolean,
     message: String,
     dateTime: {
         type: Date,
