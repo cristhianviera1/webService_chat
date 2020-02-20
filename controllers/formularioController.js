@@ -24,6 +24,12 @@ router.get('/', async (req, res) => {
     res.send(response);
 });
 
+router.get('/all', async (req, res) => {
+
+    const formulario = await Formulario.find();
+    res.send(formulario);
+});
+
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const formulario = await Formulario.findById(id);
