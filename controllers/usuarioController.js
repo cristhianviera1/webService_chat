@@ -138,9 +138,31 @@ router.put('/usuario/:id', upload.single('image'), async function(req, res) {
   })
 
   return res.status(200).json({bien: 'Usuario actualizado exitosamente'})
-  /*
-  await Usuario.updateOne({ _id: id }, req.body);
-  res.json({status: '200', text: 'Usuario actualizado'});*/
+})
+router.put('/usuario/imagen/:id', upload.single('image'), async function(req, res) {
+  const { id } = req.params;
+
+  if(!req.file) {
+    this.urlimage = "";
+  } else {
+      console.log("Este es el buffer",req.file.buffer);
+      const imagePath = path.join(__dirname, '../public/images/usuarios');
+      const fileUpload = new Resize(imagePath);
+
+      const filename = await fileUpload.save(req.file.buffer);
+      this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/usuarios/"+filename;
+  }
+
+  if (urlimage = null) {
+      return res.status(500).json({error: 'No se ha podido subir la imagen'})
+  }
+
+
+  await Usuario.updateOne({_id: id},{
+    imagen: this.urlimage.toString(),
+  })
+
+  return res.status(200).json({bien: 'Usuario actualizado exitosamente'})
 })
 //getChats
 router.post('/usuario/chats', async (req, res) => {
@@ -192,8 +214,10 @@ router.post('/usuario/login', async (req, res) => {
         });
         return res.status(200).send({ "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol });
       } else {
-        return res.status(400).send("Las credenciales no son correctas");
+        return res.status(400).send("error");
       }
+    }else{
+      return res.status(400).send("error");
     }
   })
 });
@@ -226,6 +250,41 @@ router.post('/usuario/updPassword', async (req, res) => {
         }
       })
       res.status(200).send("Has actualizado la contraseña");
+    }
+  });
+});
+
+router.post('/usuario/recuperarPassword', async (req, res) => {
+  if(req.body.correo == "" || req.body.correo == null) {
+    return res.status(400).send("Proporcione un email")
+  }
+
+  await Usuario.findOne({correo: req.body.correo}, function(err, usuario) {
+    if(usuario) {
+      var ramdomString = Math.random().toString(36).slice(-8);
+      var newHashedPassword = bcrypt.hashSync(ramdomString, 8);
+      Usuario.updateOne({correo: usuario.correo}, {password: newHashedPassword}, function (err, res) {
+        console.log(res);
+
+        var mailOptions = {
+          from: 'kimerinaservice@gmail.com',
+          to: usuario.correo.toString(),
+          subject: 'Kimerina - Nueva contraseña',
+          text: 'Kimerina te informa, esta es tu nueva contraseña: ' + ramdomString.toString() + ' .Recuerda que puedes cambiarla a tu gusto en nuestra app.'
+        };
+        emisorMail.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Email enviado a: ' + usuario.correo.toString());
+          }
+        });
+
+        if (err) {
+          res.status(404).send("Algo ha fallado");
+        }
+      })
+      res.status(200).send("Has recuperado tu contraseña");
     }
   });
 });

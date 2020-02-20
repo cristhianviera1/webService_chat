@@ -1,9 +1,6 @@
 node_modules/*
 ./.env
-<<<<<<< HEAD
 public/images/novedades
 public/images/productos
 public/images/usuarios
-=======
 .env
->>>>>>> d77518cca403e5be51439f7b87f01c779b8186ce

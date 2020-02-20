@@ -8,8 +8,6 @@
 const express = require("express");
 const http = require('http');
 const socketio = require('socket.io');
-
-const socketEvents = require('./web/socket');
 const routes = require('./web/routes');
 const appConfig = require('./config/app-config');
 const mongoose = require('mongoose');
@@ -53,6 +51,7 @@ class Server {
         new routes(this.app).routesConfig();
         this.sockets.on("connection", (userSocket) => {
             //creación de socket para cada usuario
+            console.log("someone enter here or here xd");
             userSocket.on("loginRoom", (data) => {
                 if (data in this.users) {
                     console.log("Ya has abierto :v ");
@@ -60,6 +59,7 @@ class Server {
                     var nickname = data;
                     this.users[nickname] = this.sockets;
                 }
+                console.log("someone enter here");
             });
             //Socket para el envio de mensajes
             userSocket.on("send_message", async (data) => {
@@ -68,9 +68,11 @@ class Server {
                     userIdSend: chat.userIdSend,
                     userIdReceive: chat.userIdReceive,
                     message: chat.message,
+                    imagen:chat.imagen
                 }, function (err, chat) {
                     if (err) { return res.status(500).send("Un error al guardar el chat") }
                 });
+                //Función para la relación de brigadistas con usuarios
                 Usuario.findById(chat.userIdReceive, function (err, res) {
                     var user = res;
                     if (user.rol == "brigadista") {
@@ -94,7 +96,8 @@ class Server {
                     this.users[chat.userIdReceive].emit("receive_message", {
                         userIdSend: chat.userIdSend,
                         userIdReceive: chat.userIdReceive,
-                        message: chat.message
+                        message: chat.message,
+                        imagen: chat.imagen
                     });
                 }
             });
@@ -120,7 +123,7 @@ class Server {
                     console.log(res);
                 });
                 console.log(this.users);
-                for(var usr in this.users){
+                for (var usr in this.users) {
                     console.log(this.user[usr]);
                     this.users[usr].emit("updateOfUser", "ALV PRRO DEBE RETORNAR ALGO");
                 }
