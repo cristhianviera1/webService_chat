@@ -230,4 +230,39 @@ router.post('/usuario/updPassword', async (req, res) => {
   });
 });
 
+router.post('/usuario/recuperarPassword', async (req, res) => {
+  if(req.body.correo == "" || req.body.correo == null) {
+    return res.status(400).send("Proporcione un email")
+  }
+
+  await Usuario.findOne({correo: req.body.correo}, function(err, usuario) {
+    if(usuario) {
+      var ramdomString = Math.random().toString(36).slice(-8);
+      var newHashedPassword = bcrypt.hashSync(ramdomString, 8);
+      Usuario.updateOne({correo: usuario.correo}, {password: newHashedPassword}, function (err, res) {
+        console.log(res);
+
+        var mailOptions = {
+          from: 'kimerinaservice@gmail.com',
+          to: usuario.correo.toString(),
+          subject: 'Kimerina - Nueva contraseña',
+          text: 'Kimerina te informa, esta es tu nueva contraseña: ' + ramdomString.toString() + ' .Recuerda que puedes cambiarla a tu gusto en nuestra app.'
+        };
+        emisorMail.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Email enviado a: ' + usuario.correo.toString());
+          }
+        });
+
+        if (err) {
+          res.status(404).send("Algo ha fallado");
+        }
+      })
+      res.status(200).send("Has recuperado tu contraseña");
+    }
+  });
+});
+
 module.exports = router;
