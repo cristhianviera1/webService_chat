@@ -10,7 +10,7 @@ var urlimage = null;
 //Subir imagenes
 router.post('/images', upload.single('image'), async function(req, res) {
     console.log("Este es el buffer",req.file.buffer);
-    const imagePath = path.join(__dirname, '../public/images');
+    const imagePath = path.join(__dirname, '../public/images/chat');
     const fileUpload = new Resize(imagePath);
 
     if(!req.file) {
@@ -18,7 +18,7 @@ router.post('/images', upload.single('image'), async function(req, res) {
     }
 
     const filename = await fileUpload.save(req.file.buffer);
-    return res.status(200).json({url: "http://192.168.1.8:4000/images/"+filename});
+    return res.status(200).json({url: "http://192.168.1.8:4000/images/chat"+filename});
     
 })
 
