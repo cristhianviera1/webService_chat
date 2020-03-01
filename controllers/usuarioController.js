@@ -23,7 +23,7 @@ var emisorMail = nodemailer.createTransport({
     user: 'kimerinaservice@gmail.com',
     pass: 'kimerina123'
   },
-  tls:{
+  tls: {
     rejectUnauthorized: false
   }
 });
@@ -40,10 +40,10 @@ router.get('/usuario/:id', async (req, res) => {
   res.send(usuario);
 });
 
-router.post('/usuario', upload.single('image'), async function(req, res) {
+router.post('/usuario', upload.single('image'), async function (req, res) {
   Usuario.findOne({ correo: req.body.correo }, async function (err, usuario) {
     if (usuario) {
-      return res.status(404).send('Usuario ya existente.');
+      return res.status(404).send({"error":true,"msg":"El usuario ya existe"});
     } else {
       var tempPasword;
       if (req.body.password == "" || req.body.password == null) {
@@ -72,20 +72,21 @@ router.post('/usuario', upload.single('image'), async function(req, res) {
       } else {
         tempRol = req.body.rol;
       }
+
       //Imagen------------------------------------------------------------------
       if (!req.file) {
         this.urlimage = "";
       } else {
-          console.log("Este es el buffer",req.file.buffer);
-          const imagePath = path.join(__dirname, '../public/images/usuarios');
-          const fileUpload = new Resize(imagePath);
+        console.log("Este es el buffer", req.file.buffer);
+        const imagePath = path.join(__dirname, '../public/images/usuarios');
+        const fileUpload = new Resize(imagePath);
 
-          const filename = await fileUpload.save(req.file.buffer);
-          this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/usuarios/"+filename;
+        const filename = await fileUpload.save(req.file.buffer);
+        this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/usuarios/" + filename;
       }
 
       if (urlimage = null) {
-          return res.status(500).json({error: 'No se ha podido subir la imagen'})
+        return res.status(500).json({ error: 'No se ha podido subir la imagen' })
       }
       //Fin imagen ---------------------------------------------------------------------
 
@@ -101,36 +102,36 @@ router.post('/usuario', upload.single('image'), async function(req, res) {
         rol: tempRol
       },
         function (err, usuario) {
-
-          if (err) return res.status(500).send("Un problema ha ocurrido creando el usuario.\n" + err);
-
-          res.json({ status: '200', text: 'Usuario creado exitosamente' });
+          if (err) {
+            return res.status(500).send({"error":true,"msg":"No se ha podido crear el usuario, por favor intentarlo más tarde"});
+          }
+          return res.status(200).send({"error":false,"msg":"Usuario creado exitósamente"});
         });
     }
   });
 })
 
-router.put('/usuario/:id', upload.single('image'), async function(req, res) {
+router.put('/usuario/:id', upload.single('image'), async function (req, res) {
   const { id } = req.params;
 
-  if(!req.file) {
+  if (!req.file) {
     this.urlimage = "";
   } else {
-      console.log("Este es el buffer",req.file.buffer);
-      const imagePath = path.join(__dirname, '../public/images/usuarios');
-      const fileUpload = new Resize(imagePath);
+    console.log("Este es el buffer", req.file.buffer);
+    const imagePath = path.join(__dirname, '../public/images/usuarios');
+    const fileUpload = new Resize(imagePath);
 
-      const filename = await fileUpload.save(req.file.buffer);
-      this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/usuarios/"+filename;
+    const filename = await fileUpload.save(req.file.buffer);
+    this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/usuarios/" + filename;
   }
 
   if (urlimage = null) {
-      return res.status(500).json({error: 'No se ha podido subir la imagen'})
+    return res.status(500).json({ error: 'No se ha podido subir la imagen' })
   }
 
   var hashedPassword = bcrypt.hashSync(req.body.password, 8);
 
-  await Usuario.updateOne({_id: id},{
+  await Usuario.updateOne({ _id: id }, {
     nombre: req.body.nombre,
     password: hashedPassword,
     correo: req.body.correo,
@@ -140,32 +141,32 @@ router.put('/usuario/:id', upload.single('image'), async function(req, res) {
     rol: req.body.rol
   })
 
-  return res.status(200).json({bien: 'Usuario actualizado exitosamente'})
+  return res.status(200).json({ bien: 'Usuario actualizado exitosamente' })
 })
-router.put('/usuario/imagen/:id', upload.single('image'), async function(req, res) {
+router.put('/usuario/imagen/:id', upload.single('image'), async function (req, res) {
   const { id } = req.params;
 
-  if(!req.file) {
+  if (!req.file) {
     this.urlimage = "";
   } else {
-      console.log("Este es el buffer",req.file.buffer);
-      const imagePath = path.join(__dirname, '../public/images/usuarios');
-      const fileUpload = new Resize(imagePath);
+    console.log("Este es el buffer", req.file.buffer);
+    const imagePath = path.join(__dirname, '../public/images/usuarios');
+    const fileUpload = new Resize(imagePath);
 
-      const filename = await fileUpload.save(req.file.buffer);
-      this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/usuarios/"+filename;
+    const filename = await fileUpload.save(req.file.buffer);
+    this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/usuarios/" + filename;
   }
 
   if (urlimage = null) {
-      return res.status(500).json({error: 'No se ha podido subir la imagen'})
+    return res.status(500).json({ error: 'No se ha podido subir la imagen' })
   }
 
 
-  await Usuario.updateOne({_id: id},{
+  await Usuario.updateOne({ _id: id }, {
     imagen: this.urlimage.toString(),
   })
 
-  return res.status(200).json({bien: 'Usuario actualizado exitosamente'})
+  return res.status(200).json({ bien: 'Usuario actualizado exitosamente' })
 })
 //getChats
 router.post('/usuario/chats', async (req, res) => {
@@ -219,7 +220,7 @@ router.post('/usuario/login', async (req, res) => {
       } else {
         return res.status(400).send("error");
       }
-    }else{
+    } else {
       return res.status(400).send("error");
     }
   })
@@ -234,7 +235,7 @@ router.post('/usuario/logout', async (req, res) => {
       Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
         console.log(res);
       })
-      res.json({status: '200', text: 'Se ha cerrado la session'});
+      res.json({ status: '200', text: 'Se ha cerrado la session' });
     }
   });
 });
@@ -258,15 +259,15 @@ router.post('/usuario/updPassword', async (req, res) => {
 });
 
 router.post('/usuario/recuperarPassword', async (req, res) => {
-  if(req.body.correo == "" || req.body.correo == null) {
+  if (req.body.correo == "" || req.body.correo == null) {
     return res.status(400).send("Proporcione un email")
   }
 
-  await Usuario.findOne({correo: req.body.correo}, function(err, usuario) {
-    if(usuario) {
+  await Usuario.findOne({ correo: req.body.correo }, function (err, usuario) {
+    if (usuario) {
       var ramdomString = Math.random().toString(36).slice(-8);
       var newHashedPassword = bcrypt.hashSync(ramdomString, 8);
-      Usuario.updateOne({correo: usuario.correo}, {password: newHashedPassword}, function (err, res) {
+      Usuario.updateOne({ correo: usuario.correo }, { password: newHashedPassword }, function (err, res) {
         console.log(res);
 
         var mailOptions = {
