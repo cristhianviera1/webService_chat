@@ -22,6 +22,9 @@ var emisorMail = nodemailer.createTransport({
   auth: {
     user: 'kimerinaservice@gmail.com',
     pass: 'kimerina123'
+  },
+  tls:{
+    rejectUnauthorized: false
   }
 });
 
