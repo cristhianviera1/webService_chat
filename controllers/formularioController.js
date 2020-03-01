@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
         }
         response.push(newForm);
     }
-    res.send(response);
+    return res.send(response);
 });
 
 router.get('/:id', async (req, res) => {
