@@ -43,7 +43,7 @@ router.get('/usuario/:id', async (req, res) => {
 router.post('/usuario', upload.single('image'), async function (req, res) {
   Usuario.findOne({ correo: req.body.correo }, async function (err, usuario) {
     if (usuario) {
-      return res.status(404).send({"error":true,"msg":"El usuario ya existe"});
+      return res.status(404).send({ "error": true, "msg": "El usuario ya existe" });
     } else {
       var tempPasword;
       if (req.body.password == "" || req.body.password == null) {
@@ -103,9 +103,9 @@ router.post('/usuario', upload.single('image'), async function (req, res) {
       },
         function (err, usuario) {
           if (err) {
-            return res.status(500).send({"error":true,"msg":"No se ha podido crear el usuario, por favor intentarlo más tarde"});
+            return res.status(500).send({ "error": true, "msg": "No se ha podido crear el usuario, por favor intentarlo más tarde" });
           }
-          return res.status(200).send({"error":false,"msg":"Usuario creado exitósamente"});
+          return res.status(200).send({ "error": false, "msg": "Usuario creado exitósamente" });
         });
     }
   });
@@ -208,7 +208,7 @@ router.delete('/usuario/:id', async (req, res) => {
 
 router.post('/usuario/login', async (req, res) => {
   if (req.body.password == "" || req.body.password == null || req.body.correo == "" || req.body.password == null) {
-    return res.status(400).send("Por favor ingrese valores");
+    return res.status(400).send({ "error": true, "msg": "No ha ingresado los parámetros requeridos" });
   }
   Usuario.findOne({ correo: req.body.correo }, function (err, usuario) {
     if (usuario != null) {
@@ -216,12 +216,12 @@ router.post('/usuario/login', async (req, res) => {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
           console.log(res);
         });
-        return res.status(200).send({ "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol });
+        return res.status(200).send({ "error": false, "msg": "Ha iniciado sesión exitósamente", "usuario": { "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol } });
       } else {
-        return res.status(400).send("error");
+        return res.status(400).send({ "error": true, "msg": "Por favor revisa que hayas ingresado correctamente tu dirección de correo y tu contraseña" });
       }
     } else {
-      return res.status(400).send("error");
+      return res.status(400).send({ "error": true, "msg": "El usuario no se encuentra registrado" });
     }
   })
 });

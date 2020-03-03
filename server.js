@@ -51,15 +51,12 @@ class Server {
         new routes(this.app).routesConfig();
         this.sockets.on("connection", (userSocket) => {
             //creación de socket para cada usuario
-            console.log("someone enter here or here xd");
             userSocket.on("loginRoom", (data) => {
                 if (data in this.users) {
-                    console.log("Ya has abierto :v ");
                 } else {
                     var nickname = data;
                     this.users[nickname] = this.sockets;
                 }
-                console.log("someone enter here");
             });
             //Socket para el envio de mensajes
             userSocket.on("send_message", async (data) => {
@@ -120,14 +117,11 @@ class Server {
             userSocket.on("logout", async (data) => {
                 var usuario = await Usuario.findById(data["userId"]);
                 Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
-                    console.log(res);
+                    console.log("se ha deslogeado");
                 });
-                console.log(this.users);
                 for (var usr in this.users) {
-                    console.log(this.user[usr]);
-                    this.users[usr].emit("updateOfUser", "ALV PRRO DEBE RETORNAR ALGO");
+                    this.users[usr].emit("getChats_response", "ALV PRRO DEBE RETORNAR ALGO");
                 }
-                //sockets.broadcast.emit("updateOfUser", "ALV PRRO DEBE RETORNAR ALGO");
             });
         })
     }
