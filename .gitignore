@@ -1,3 +1,6 @@
 node_modules/*
 ./.env
+public/images/novedades/*
+public/images/productos/*
+public/images/usuarios/*
 .env
