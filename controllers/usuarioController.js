@@ -111,6 +111,7 @@ router.post('/usuario', upload.single('image'), async function (req, res) {
   });
 })
 
+//dios apidate de mi persona
 router.put('/usuario/:id', upload.single('image'), async function (req, res) {
   const { id } = req.params;
 
