@@ -169,9 +169,9 @@ router.put('/usuario/imagen/:id', upload.single('image'), async function (req, r
     this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/usuarios/" + filename;
   }
 
-  if (urlimage = null) {
-    return res.status(500).json({ error: 'No se ha podido subir la imagen' })
-  }
+  if (this.urlimage == "") {
+    this.urlimage = req.body.image
+}
 
 
   await Usuario.updateOne({ _id: id }, {

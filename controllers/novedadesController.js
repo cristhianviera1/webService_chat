@@ -80,8 +80,8 @@ router.put('/:id', upload.single('image'), async function(req, res) {
         this.urlimage = "http://"+process.env.HOST+":"+process.env.PORT+"/images/novedades/"+filename;
     }
 
-    if (urlimage = null) {
-        return res.status(500).json({error: 'No se ha podido subir la imagen'})
+    if (this.urlimage == "") {
+        this.urlimage = req.body.image
     }
 
     await Novedad.updateOne({_id: id},{
