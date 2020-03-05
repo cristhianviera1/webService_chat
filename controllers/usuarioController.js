@@ -227,7 +227,7 @@ router.post('/usuario/login', async (req, res) => {
       if (bcrypt.compareSync(req.body.password, usuario.password)) {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
         });
-        return res.status(200).send({ "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol });
+        return res.status(200).send({ "error": false, "msg": "Ha iniciado sesión exitósamente", "usuario": { "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol } });
       } else {
         return res.status(400).send({ "error": true, "msg": "Por favor revisa que hayas ingresado correctamente tu dirección de correo y tu contraseña" });
       }
