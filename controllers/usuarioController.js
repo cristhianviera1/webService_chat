@@ -214,7 +214,6 @@ router.post('/usuario/login', async (req, res) => {
     if (usuario != null) {
       if (bcrypt.compareSync(req.body.password, usuario.password)) {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
-          console.log(res);
         });
         return res.status(200).send({ "error": false, "msg": "Ha iniciado sesión exitósamente", "usuario": { "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol } });
       } else {

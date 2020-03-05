@@ -35,6 +35,7 @@ class Server {
         this.app.use(bodyParser.json({ limit: '10mb' }));
         this.app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
         this.app.use(express.static('public'));
+        this.users = {};
         /*this.app.use(cors({origin: '*',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         preflightContinue: false,
@@ -53,9 +54,12 @@ class Server {
             //creación de socket para cada usuario
             userSocket.on("loginRoom", (data) => {
                 if (data in this.users) {
+                    console.log("Ya existe el usuario en el socket");
                 } else {
+                    console.log("Se creo un nuevo socket para el usuario");
                     var nickname = data;
-                    this.users[nickname] = this.sockets;
+                    this.users[nickname] = userSocket;
+                    console.log(userSocket);
                 }
             });
             //Socket para el envio de mensajes
@@ -65,7 +69,7 @@ class Server {
                     userIdSend: chat.userIdSend,
                     userIdReceive: chat.userIdReceive,
                     message: chat.message,
-                    imagen:chat.imagen
+                    imagen: chat.imagen
                 }, function (err, chat) {
                     if (err) { return res.status(500).send("Un error al guardar el chat") }
                 });
@@ -84,23 +88,32 @@ class Server {
                                     userToChat: chat.userIdSend,
                                     lastMessage: chat.message
                                 });
+                                //actualizarData();
                             }
                         });
                     }
                 });
-                if (chat.userIdReceive in this.users) {
-                    console.log(chat.userIdReceive);
-                    this.users[chat.userIdReceive].emit("receive_message", {
-                        userIdSend: chat.userIdSend,
-                        userIdReceive: chat.userIdReceive,
-                        message: chat.message,
-                        imagen: chat.imagen
-                    });
+                for (var name in this.users) {
+                    if (name == chat.userIdReceive) {
+                        console.log(chat);
+                        this.users[name].emit("receive_message", {
+                            userIdSend: chat.userIdSend,
+                            userIdReceive: chat.userIdReceive,
+                            message: chat.message,
+                            imagen: chat.imagen
+                        }).then((result)=>{
+                            console.log(result);
+                        });
+                    }
                 }
             });
+            function actualizarData() {
+                console.log(this.users);
+            }
             userSocket.on("getUserList", async (data) => {
                 var userRol = await Usuario.findById(data);
                 var response
+                console.log(data);
                 if (userRol.rol == "usuario") {
                     response = await Usuario.find({ "rol": "brigadista" }, { "password": false });
                 } else if (userRol.rol == "brigadista") {
@@ -110,18 +123,16 @@ class Server {
                         response.push(await Usuario.findOne({ _id: new ObjectId(tmpResponse[obj].userToChat) }, { "password": false }));
                     }
                 }
-                userSocket.emit("getChats_response", response)
+                userSocket.emit("getChats_response", response);
             });
-
-            //socket para desloguearse e inhabilitar usuario como activo
             userSocket.on("logout", async (data) => {
                 var usuario = await Usuario.findById(data["userId"]);
                 Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
                     console.log("se ha deslogeado");
                 });
-                for (var usr in this.users) {
-                    this.users[usr].emit("getChats_response", "ALV PRRO DEBE RETORNAR ALGO");
-                }
+                /*for(var tmpUsr in this.users){
+                    tmpUsr.emit("updateUsers",{"error":false});
+                }*/
             });
         })
     }
