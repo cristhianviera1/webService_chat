@@ -128,17 +128,29 @@ router.put('/usuario/:id', upload.single('image'), async function (req, res) {
   if (urlimage = null) {
     return res.status(500).json({ error: 'No se ha podido subir la imagen' })
   }
-
-  var hashedPassword = bcrypt.hashSync(req.body.password, 8);
-
-  await Usuario.updateOne({ _id: id }, {
-    nombre: req.body.nombre,
-    password: hashedPassword,
-    correo: req.body.correo,
-    edad: req.body.edad,
-    genero: req.body.genero,
-    imagen: this.urlimage.toString(),
-    rol: req.body.rol
+  await Usuario.findOne({ password: req.body.password }, async function (err, usuario) { 
+    if (usuario != null) {
+      await Usuario.updateOne({ _id: id }, {
+        nombre: req.body.nombre,
+        password: usuario.password,
+        correo: req.body.correo,
+        edad: req.body.edad,
+        genero: req.body.genero,
+        imagen: this.urlimage.toString(),
+        rol: req.body.rol
+      })
+    } else {
+      var hashedPassword = bcrypt.hashSync(req.body.password, 8);
+      await Usuario.updateOne({ _id: id }, {
+        nombre: req.body.nombre,
+        password: hashedPassword,
+        correo: req.body.correo,
+        edad: req.body.edad,
+        genero: req.body.genero,
+        imagen: this.urlimage.toString(),
+        rol: req.body.rol
+      })
+    }
   })
 
   return res.status(200).json({ bien: 'Usuario actualizado exitosamente' })
@@ -216,7 +228,7 @@ router.post('/usuario/login', async (req, res) => {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {
           console.log(res);
         });
-        return res.status(200).send({ "error": false, "msg": "Ha iniciado sesión exitósamente", "usuario": { "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol } });
+        return res.status(200).send({ "id": usuario._id, "nombre": usuario.nombre, "correo": usuario.correo, "imagen": usuario.imagen, "edad": usuario.edad, "genero": usuario.genero, "rol": usuario.rol });
       } else {
         return res.status(400).send({ "error": true, "msg": "Por favor revisa que hayas ingresado correctamente tu dirección de correo y tu contraseña" });
       }
