@@ -111,6 +111,7 @@ router.post('/usuario', upload.single('image'), async function (req, res) {
   });
 })
 
+//dios apidate de mi persona
 router.put('/usuario/:id', upload.single('image'), async function (req, res) {
   const { id } = req.params;
 
@@ -125,8 +126,8 @@ router.put('/usuario/:id', upload.single('image'), async function (req, res) {
     this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/usuarios/" + filename;
   }
 
-  if (urlimage = null) {
-    return res.status(500).json({ error: 'No se ha podido subir la imagen' })
+  if (this.urlimage == "") {
+    this.urlimage = req.body.image
   }
   await Usuario.findOne({ password: req.body.password }, async function (err, usuario) { 
     if (usuario != null) {
