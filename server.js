@@ -25,9 +25,9 @@ mongoose.connect('mongodb://localhost/kimirina_app')
     .then(db => console.log('DB conectada'))
     .catch(err => console.log(err));
 
+var users = {};
 
 class Server {
-    users = {};
     constructor() {
         this.app = express();
         this.http = http.Server(this.app);
@@ -35,7 +35,6 @@ class Server {
         this.app.use(bodyParser.json({ limit: '10mb' }));
         this.app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
         this.app.use(express.static('public'));
-        this.users = {};
         /*this.app.use(cors({origin: '*',
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         preflightContinue: false,
@@ -48,23 +47,23 @@ class Server {
 
     /* Including app Routes starts*/
     includeRoutes() {
-
         new routes(this.app).routesConfig();
-        this.sockets.on("connection", (userSocket) => {
+        this.sockets.on("connection", function (userSocket) {
             //creación de socket para cada usuario
-            userSocket.on("loginRoom", (data) => {
-                if (data in this.users) {
-                    console.log("Ya existe el usuario en el socket");
-                } else {
-                    console.log("Se creo un nuevo socket para el usuario");
-                    var nickname = data;
-                    this.users[nickname] = userSocket;
-                    console.log(userSocket);
-                }
+            userSocket.on("loginRoom", function (data) {
+                var nickname = data;
+                users[nickname] = userSocket.id;
             });
             //Socket para el envio de mensajes
-            userSocket.on("send_message", async (data) => {
+            userSocket.on("send_message", function (data) {
                 var chat = JSON.parse(data);
+                var socketId = users[chat.userIdReceive];
+                userSocket.to(socketId).emit("receive_message", {
+                    userIdSend: chat.userIdSend,
+                    userIdReceive: chat.userIdReceive,
+                    message: chat.message,
+                    imagen: chat.imagen
+                });
                 Chat.create({
                     userIdSend: chat.userIdSend,
                     userIdReceive: chat.userIdReceive,
@@ -93,22 +92,25 @@ class Server {
                         });
                     }
                 });
-                for (var name in this.users) {
+                /*for (var name in users) {
                     if (name == chat.userIdReceive) {
-                        console.log(chat);
-                        this.users[name].emit("receive_message", {
+                        this.sockets.to(users[name]).emit("receive_message", {
                             userIdSend: chat.userIdSend,
                             userIdReceive: chat.userIdReceive,
                             message: chat.message,
                             imagen: chat.imagen
-                        }).then((result)=>{
-                            console.log(result);
+                        });
+                        /*users[name].emit("receive_message", {
+                            userIdSend: chat.userIdSend,
+                            userIdReceive: chat.userIdReceive,
+                            message: chat.message,
+                            imagen: chat.imagen
                         });
                     }
-                }
+                }*/
             });
             function actualizarData() {
-                console.log(this.users);
+                console.log(users);
             }
             userSocket.on("getUserList", async (data) => {
                 var userRol = await Usuario.findById(data);
@@ -130,7 +132,7 @@ class Server {
                 Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
                     console.log("se ha deslogeado");
                 });
-                /*for(var tmpUsr in this.users){
+                /*for(var tmpUsr in users){
                     tmpUsr.emit("updateUsers",{"error":false});
                 }*/
             });
