@@ -87,31 +87,12 @@ class Server {
                                     userToChat: chat.userIdSend,
                                     lastMessage: chat.message
                                 });
-                                //actualizarData();
                             }
                         });
                     }
                 });
-                /*for (var name in users) {
-                    if (name == chat.userIdReceive) {
-                        this.sockets.to(users[name]).emit("receive_message", {
-                            userIdSend: chat.userIdSend,
-                            userIdReceive: chat.userIdReceive,
-                            message: chat.message,
-                            imagen: chat.imagen
-                        });
-                        /*users[name].emit("receive_message", {
-                            userIdSend: chat.userIdSend,
-                            userIdReceive: chat.userIdReceive,
-                            message: chat.message,
-                            imagen: chat.imagen
-                        });
-                    }
-                }*/
             });
-            function actualizarData() {
-                console.log(users);
-            }
+
             userSocket.on("getUserList", async (data) => {
                 var userRol = await Usuario.findById(data);
                 var response
@@ -129,12 +110,17 @@ class Server {
             });
             userSocket.on("logout", async (data) => {
                 var usuario = await Usuario.findById(data["userId"]);
+                for (var usr in users) {
+                    userSocket.to(users[usr]).emit("updateUsers", { "error": false });
+                }
                 Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
                     console.log("se ha deslogeado");
                 });
-                /*for(var tmpUsr in users){
-                    tmpUsr.emit("updateUsers",{"error":false});
-                }*/
+            });
+            userSocket.on("login", async (data) => {
+                for (var usr in users) {
+                    userSocket.to(users[usr]).emit("updateUsers", { "error": false });
+                }
             });
         })
     }
