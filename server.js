@@ -88,6 +88,8 @@ class Server {
                                     lastMessage: chat.message
                                 });
                             }
+                            userSocket.to(chat.userIdSend).emit("updateUsers", { "error": false });
+                            userSocket.to(chat.userIdReceive).emit("updateUsers", { "error": false });
                         });
                     }
                 });
