@@ -124,37 +124,19 @@ router.put('/usuario/:id', upload.single('image'), async function (req, res) {
 
     const filename = await fileUpload.save(req.file.buffer);
     this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/usuarios/" + filename;
+    req.body.imagen = this.urlimage;
   }
-
   if (this.urlimage == "") {
     this.urlimage = req.body.image
   }
-  await Usuario.findOne({ password: req.body.password }, async function (err, usuario) { 
-    if (usuario != null) {
-      await Usuario.updateOne({ _id: id }, {
-        nombre: req.body.nombre,
-        password: usuario.password,
-        correo: req.body.correo,
-        edad: req.body.edad,
-        genero: req.body.genero,
-        imagen: this.urlimage.toString(),
-        rol: req.body.rol
-      })
-    } else {
-      var hashedPassword = bcrypt.hashSync(req.body.password, 8);
-      await Usuario.updateOne({ _id: id }, {
-        nombre: req.body.nombre,
-        password: hashedPassword,
-        correo: req.body.correo,
-        edad: req.body.edad,
-        genero: req.body.genero,
-        imagen: this.urlimage.toString(),
-        rol: req.body.rol
-      })
-    }
-  })
-
-  return res.status(200).json({ bien: 'Usuario actualizado exitosamente' })
+  var usuario = await Usuario.findById(id);
+  if (req.body.password != undefined && req.body.password != usuario.password) {
+    var hashedPassword = bcrypt.hashSync(req.body.password, 8);
+    req.body.password = hashedPassword;
+  }
+  await Usuario.updateOne({ _id: usuario.id }, req.body);
+  console.log("Se intento actualizar por app");
+  return res.status(200).json({ bien: 'Usuario actualizado exitosamente' ,error:"false"})
 })
 router.put('/usuario/imagen/:id', upload.single('image'), async function (req, res) {
   const { id } = req.params;
@@ -172,14 +154,14 @@ router.put('/usuario/imagen/:id', upload.single('image'), async function (req, r
 
   if (this.urlimage == "") {
     this.urlimage = req.body.image
-}
+  }
 
 
   await Usuario.updateOne({ _id: id }, {
     imagen: this.urlimage.toString(),
   })
-
-  return res.status(200).json({ bien: 'Usuario actualizado exitosamente' })
+  console.log("Se intento actualizar por app x2");
+  return res.status(200).json({ error: 'false',data: this.urlimage});
 })
 //getChats
 router.post('/usuario/chats', async (req, res) => {
