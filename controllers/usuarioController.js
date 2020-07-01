@@ -29,7 +29,7 @@ var emisorMail = nodemailer.createTransport({
 });
 
 router.get('/usuario', async (req, res) => {
-  const usuarios = await Usuario.find();
+  const usuarios = await Usuario.find({activo: true});
   res.send(usuarios);
 });
 
@@ -200,12 +200,28 @@ router.delete('/usuario/:id', async (req, res) => {
   res.json({ status: '200', text: 'Usuario eliminado' });
 });
 
+// Soft Delete --------------------------------
+router.post('/usuario/soft', async (req, res) => {
+  if (req.body.id == "" || req.body.id == null) {
+    return res.status(400).send("Por favor ingrese valores");
+  }
+  Usuario.findById(req.body.id, function (err, usuario) {
+    if (usuario) {
+      Usuario.updateOne({ _id: usuario._id }, { activo: false }, function (err, res) {
+        console.log(res);
+      })
+      res.json({ status: '200', text: 'Se ha desactivado este usuario' });
+    }
+  });
+});
+//---------------------------------------------
+
 
 router.post('/usuario/login', async (req, res) => {
   if (req.body.password == "" || req.body.password == null || req.body.correo == "" || req.body.password == null) {
     return res.status(400).send({ "error": true, "msg": "No ha ingresado los parámetros requeridos" });
   }
-  Usuario.findOne({ correo: req.body.correo }, function (err, usuario) {
+  Usuario.findOne({ correo: req.body.correo, activo: true }, function (err, usuario) {
     if (usuario != null) {
       if (bcrypt.compareSync(req.body.password, usuario.password)) {
         Usuario.updateOne({ _id: usuario._id }, { online: true }, function (err, res) {

@@ -24,7 +24,11 @@ const UsuarioSchema = new Schema({
         type: String,
         default: ""
     },
-    online: Boolean
+    online: Boolean,
+    activo: {
+        type: Boolean,
+        default:  true
+    }
 });
 
 module.exports = mongoose.model('usuarios', UsuarioSchema);
