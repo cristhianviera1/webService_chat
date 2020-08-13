@@ -18,7 +18,6 @@ jobs:
           KEY: ${{ secrets.SSHKEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ${{ secrets.PATH_API_DEV }}
+            cd /home/Kimirina/api_dev
             git pull origin development
-            npm install --production
-            pm2 restart node-app
+            ls -la
