@@ -7,11 +7,11 @@
 
 const routeHandler = require('./../handlers/route-handler');
 global.__root   = __dirname + '/'; 
-var webroutes = require(__root + '../controllers/routesweb');
-var usuarioController = require(__root + '../controllers/usuarioController');
-var novedadController = require(__root + '../controllers/novedadesController');
-var productoController = require(__root + '../controllers/productosController');
-var formularioController = require(__root + '../controllers/formularioController');
+let webroutes = require(__root + '../controllers/routesweb');
+let userController = require(__root + '../controllers/userController');
+let newController = require(__root + '../controllers/newsController');
+let productController = require(__root + '../controllers/productController');
+let formController = require(__root + '../controllers/formController');
 
 class Routes{
 
@@ -33,13 +33,13 @@ class Routes{
 
 		this.app.use('/webroutes', webroutes);
 
-		this.app.use('/', usuarioController);
+		this.app.use('/', userController);
 
-		this.app.use('/novedades', novedadController);
+		this.app.use('/news', newController);
 
-		this.app.use('/productos', productoController);
+		this.app.use('/products', productController);
 
-		this.app.use('/formulario', formularioController);
+		this.app.use('/form', formController);
 
 		this.app.get('*', routeHandler.routeNotFoundHandler);
 

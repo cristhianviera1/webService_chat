@@ -1,13 +1,7 @@
-	/*
-* Real time private chatting app using Angular 2, Nodejs, mongodb and Socket.io
-* @author Shashank Tiwari
-*/
-//Monogoose
-var mongoose = require('mongoose');
+let mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/kimirina_app');
  
 "use strict";
-/*requiring mongodb node modules */
 const mongodb = require('mongodb');
 const assert = require('assert');
 
