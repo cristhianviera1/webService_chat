@@ -8,20 +8,17 @@ on:
 jobs:
   deploy:
     runs-on: [ubuntu-latest]
+
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Push to server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          KEY: ${{ secrets.SSHKEY }}
-          port: ${{ secrets.PORT }}
-          script: cd ${{ secrets.PATH_API_DEV }} && git pull && export PATH="/usr/local/share/npm/bin:$PATH" && npm i
+      - name: SSH and deploy node app
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            KEY: ${{ secrets.SSHKEY }}
+            port: ${{ secrets.PORT }}
+            script: |
+              cd ${{ secrets.PATH_API_DEV }}
+              git pull development
+              npm install --production
+              pm2 restart node-app
