@@ -20,4 +20,4 @@ jobs:
           script: |
             cd /home/Kimirina/api_dev
             git pull origin development
-            ./npm -v
+            npm -v
