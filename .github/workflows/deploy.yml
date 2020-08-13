@@ -18,7 +18,7 @@ jobs:
           KEY: ${{ secrets.SSHKEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /home/Kimirina/api_dev
+            cd ${{ secrets.PATH_API_DEV }}
             git pull origin development
             npm i
             /root/.nvm/versions/node/v12.18.0/bin/pm2 restart all
