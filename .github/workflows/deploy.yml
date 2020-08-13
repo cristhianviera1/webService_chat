@@ -29,4 +29,4 @@ jobs:
             git pull
             export PATH="/usr/local/share/npm/bin:$PATH"
             npm i
-            pm2 restart
+            pm2 restart all
