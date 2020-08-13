@@ -33,7 +33,7 @@ router.post('/', upload.single('image'), async function (req, res) {
         const filename = await fileUpload.save(req.file.buffer);
         this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/productos/" + filename;
     }
-    if (!urlimage) {
+    if (urlimage == "") {
         return res.status(500).json({
             error: true,
             msg: 'No se ha podido subir la imagen'
