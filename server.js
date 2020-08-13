@@ -13,9 +13,7 @@ const appConfig = require('./config/app-config');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors')
-
-
-const Usuario = require('./models/user');
+const User = require('./models/user');
 const Chat = require('./models/chat');
 const ChatList = require('./models/chatList');
 var ObjectId = require('mongoose').Types.ObjectId;
@@ -73,7 +71,7 @@ class Server {
                     if (err) { return res.status(500).send("Un error al guardar el chat") }
                 });
                 //Función para la relación de brigadistas con usuarios
-                Usuario.findById(chat.userIdReceive, function (err, res) {
+                User.findById(chat.userIdReceive, function (err, res) {
                     var user = res;
                     if (user.rol == "brigadista") {
                         ChatList.find({ $and: [{ "userId": user._id }, { "userToChat": chat.userIdSend }] }, function (err, res) {
@@ -96,25 +94,25 @@ class Server {
             });
 
             userSocket.on("getUserList", async (data) => {
-                var userRol = await Usuario.findById(data);
+                var userRol = await User.findById(data);
                 var response
                 if (userRol.rol == "usuario") {
-                    response = await Usuario.find({ "rol": "brigadista" }, { "password": false });
+                    response = await User.find({ "rol": "brigadista" }, { "password": false });
                 } else if (userRol.rol == "brigadista") {
                     var tmpResponse = await ChatList.find({ "userId": userRol._id });
                     response = new Array;
                     for (var obj in tmpResponse) {
-                        response.push(await Usuario.findOne({ _id: new ObjectId(tmpResponse[obj].userToChat) }, { "password": false }));
+                        response.push(await User.findOne({ _id: new ObjectId(tmpResponse[obj].userToChat) }, { "password": false }));
                     }
                 }
                 userSocket.emit("getChats_response", response);
             });
             userSocket.on("logout", async (data) => {
-                var usuario = await Usuario.findById(data["userId"]);
+                var usuario = await User.findById(data["userId"]);
                 for (var usr in users) {
                     userSocket.to(users[usr]).emit("updateUsers", { "error": false });
                 }
-                Usuario.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
+                User.updateOne({ _id: usuario._id }, { online: false }, function (err, res) {
                     console.log("se ha deslogeado");
                 });
             });
