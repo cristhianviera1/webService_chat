@@ -17,4 +17,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           KEY: ${{ secrets.SSHKEY }}
           port: ${{ secrets.PORT }}
-          script: cd ${{ secrets.PROJECT_PATH }} && git pull && npm i && pm2 restart
+          script: cd ${{ secrets.PATH_API_DEV }} && git pull && npm i && pm2 restart
