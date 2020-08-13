@@ -19,6 +19,6 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ${{ secrets.PATH_API_DEV }}
-            git pull development
+            git pull origin development
             npm install --production
             pm2 restart node-app
