@@ -15,7 +15,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 
 
-const Usuario = require('./models/usuario');
+const Usuario = require('./models/user');
 const Chat = require('./models/chat');
 const ChatList = require('./models/chatList');
 var ObjectId = require('mongoose').Types.ObjectId;
@@ -98,7 +98,6 @@ class Server {
             userSocket.on("getUserList", async (data) => {
                 var userRol = await Usuario.findById(data);
                 var response
-                console.log(data);
                 if (userRol.rol == "usuario") {
                     response = await Usuario.find({ "rol": "brigadista" }, { "password": false });
                 } else if (userRol.rol == "brigadista") {

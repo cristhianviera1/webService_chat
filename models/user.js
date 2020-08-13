@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const UsuarioSchema = new Schema({
+const UserSchema = new Schema({
     password: String,
-    correo: String,
-    edad:  {
+    email: String,
+    age:  {
         type: String,
         default: ""
     },
-    genero:  {
+    gender:  {
         type: String,
         default: ""
     },
@@ -16,19 +16,19 @@ const UsuarioSchema = new Schema({
         type: String,
         default: ""
     },
-    imagen:  {
+    image:  {
         type: String,
         default: ""
     },
-    nombre:  {
+    name:  {
         type: String,
         default: ""
     },
     online: Boolean,
-    activo: {
+    status: {
         type: Boolean,
         default:  true
     }
 });
 
-module.exports = mongoose.model('usuarios', UsuarioSchema);
+module.exports = mongoose.model('user', UserSchema);

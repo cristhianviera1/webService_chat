@@ -4,20 +4,20 @@ const dateGuayaquil = moment().format('YYYY-MM-DD HH:mm');
 
 const Schema = mongoose.Schema;
 
-const NovedadesSchema = new Schema({
-    titulo: {
+const NewsSchema = new Schema({
+    title: {
         type: String,
         default: ""
     },
-    descripcion: {
+    description: {
         type: String,
         default: ""
     },
-    imagen: {
+    image: {
         type: String,
         default: ""
     },
-    fechaPublicacion: {
+    publicationDate: {
         type: String,
         default: dateGuayaquil
     },
@@ -27,4 +27,4 @@ const NovedadesSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model('novedades', NovedadesSchema);
+module.exports = mongoose.model('news', NewsSchema);

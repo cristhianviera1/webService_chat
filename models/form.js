@@ -4,42 +4,42 @@ const dateGuayaquil = moment().format('YYYY-MM-DD HH:mm');
 
 const Schema = mongoose.Schema;
 
-const FormularioSchema = new Schema({
-    personaLlena: {
-        type: Schema.Types.ObjectId, ref: 'usuarios'
+const FormSchema = new Schema({
+    personFill: {
+        type: Schema.Types.ObjectId, ref: 'user'
     },
-    fechaLlena: {
+    FillDate: {
         type: String,
         default: dateGuayaquil
     },
-    pregunta1: {
+    questionOne: {
         type: String,
         default: ""
     },
-    pregunta2: {
+    questionTwo: {
         type: String,
         default: ""
     },
-    pregunta3: {
+    questionThree: {
         type: String,
         default: ""
     },
-    pregunta4: {
+    questionFour: {
         type: String,
         default: ""
     },
-    pregunta5: {
+    questionFive: {
         type: String,
         default: ""
     },
-    pregunta6: {
+    questionSix: {
         type: String,
         default: ""
     },
-    pregunta7: {
+    questionSeven: {
         type: Array,
         default: ""
     }
 });
 
-module.exports = mongoose.model('formulario', FormularioSchema);
+module.exports = mongoose.model('form', FormSchema);
