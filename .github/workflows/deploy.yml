@@ -21,4 +21,4 @@ jobs:
             cd /home/Kimirina/api_dev
             git pull origin development
             npm i
-            pm2 restart all
+            /root/.nvm/versions/node/v12.18.0/bin/pm2 restart all
