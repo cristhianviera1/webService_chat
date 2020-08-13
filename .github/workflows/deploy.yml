@@ -24,9 +24,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           KEY: ${{ secrets.SSHKEY }}
           port: ${{ secrets.PORT }}
-          script: |
-            cd ${{ secrets.PATH_API_DEV }}
-            git pull
-            export PATH="/usr/local/share/npm/bin:$PATH"
-            npm i
-            pm2 restart all
+          script: cd ${{ secrets.PATH_API_DEV }} && git pull && export PATH="/usr/local/share/npm/bin:$PATH" && npm i && pm2 restart all
