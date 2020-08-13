@@ -10,6 +10,13 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Push to server
         uses: appleboy/ssh-action@master
         with:
@@ -17,4 +24,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           KEY: ${{ secrets.SSHKEY }}
           port: ${{ secrets.PORT }}
-          script: cd ${{ secrets.PATH_API_DEV }} && git pull && npm install && pm2 restart
+          script: cd ${{ secrets.PATH_API_DEV }} && git pull && ls
