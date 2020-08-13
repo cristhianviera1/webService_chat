@@ -20,4 +20,5 @@ jobs:
           script: |
             cd /home/Kimirina/api_dev
             git pull origin development
-            npm -v
+            npm i
+            pm2 restart all
