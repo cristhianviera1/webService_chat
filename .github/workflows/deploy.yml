@@ -13,11 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Use Node 12.X
-      - uses: actions/setup-node@v1
-          with:
-            node-version: 12
-
       - uses: appleboy/ssh-action@master
           with:
             HOST: ${{ secrets.HOST }}
