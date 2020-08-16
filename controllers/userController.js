@@ -151,7 +151,7 @@ router.put('/user/image/:id', upload.single('image'), async function (req, res) 
     })
     return res.status(200).json({
         error: false,
-        msg: this.urlimage
+        data: this.urlimage
     });
 })
 
