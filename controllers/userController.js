@@ -43,6 +43,13 @@ router.get('/user/:id', async (req, res) => {
 
 router.post('/user', upload.single('image'), async function (req, res) {
     const _email = req.body.email.toLowerCase();
+    const userBody = req.body;
+    if (!userBody.name || !userBody.age || !userBody.email) {
+        return res.status(400).json({
+            error: true,
+            msg: "No has ingresado los parámetros necesarios"
+        });
+    }
     User.findOne({email: _email}, async function (err, user) {
         if (user) {
             return res.status(400).json({
@@ -102,7 +109,13 @@ router.post('/user', upload.single('image'), async function (req, res) {
                 }
                 return res.status(200).json({
                     error: false,
-                    msg: "Usuario creado exitósamente"
+                    data: {
+                        age: user.age,
+                        gender: user.gender,
+                        rol: user.rol,
+                        name: user.name,
+                        email: user.email
+                    }
                 });
             });
 

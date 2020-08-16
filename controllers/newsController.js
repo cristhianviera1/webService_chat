@@ -43,6 +43,10 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', upload.single('image'), async function (req, res) {
+    const newBody = req.body;
+    if (!newBody.title || !newBody.description || !newBody.link) {
+        return res.status(400).json({error: true, msg: "No has ingresado los parámetros necesarios"})
+    }
     if (!req.file) {
         this.urlimage = "";
     } else {
@@ -51,7 +55,7 @@ router.post('/', upload.single('image'), async function (req, res) {
         const filename = await fileUpload.save(req.file.buffer);
         this.urlimage = "http://" + process.env.HOST + ":" + process.env.PORT + "/images/novedades/" + filename;
     }
-    if (!urlimage) {
+    if (urlimage === "") {
         return res.status(500).json({
             error: true,
             msg: 'No se ha podido subir la imagen'

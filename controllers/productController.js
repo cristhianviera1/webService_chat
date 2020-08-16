@@ -25,6 +25,10 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', upload.single('image'), async function (req, res) {
+    const bodyProduct = req.body;
+    if (!bodyProduct.title || !bodyProduct.description || !bodyProduct.link || !bodyProduct.price || !bodyProduct.observations) {
+        return res.status(400).json({error: true, msg: "No has ingresado los parámetros necesarios"});
+    }
     if (!req.file) {
         this.urlimage = "";
     } else {
@@ -41,12 +45,12 @@ router.post('/', upload.single('image'), async function (req, res) {
     }
 
     await Product.create({
-        title: req.body.title,
-        description: req.body.description,
+        title: bodyProduct.title,
+        description: bodyProduct.description,
         image: this.urlimage.toString(),
-        link: req.body.link,
-        price: req.body.price,
-        observations: req.body.observations
+        link: bodyProduct.link,
+        price: bodyProduct.price,
+        observations: bodyProduct.observations
     })
 
     return res.status(200).json({

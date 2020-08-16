@@ -4,8 +4,15 @@
   "description": "This Rest API for MY Angular2 Projects.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "test": "echo \\\"Error: no tests specified\\\" && exit 1",
+    "start": "nodemon server.js",
+    "test": "jest"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "keywords": [
     "rest",
@@ -32,5 +39,9 @@
     "sharp": "^0.24.1",
     "socket.io": "^1.7.2",
     "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "jest": "^26.4.0",
+    "supertest": "^4.0.2"
   }
 }
