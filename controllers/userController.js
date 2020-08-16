@@ -42,7 +42,8 @@ router.get('/user/:id', async (req, res) => {
 });
 
 router.post('/user', upload.single('image'), async function (req, res) {
-    User.findOne({email: req.body.email}, async function (err, user) {
+    const _email = req.body.email.toLowerCase();
+    User.findOne({email: _email}, async function (err, user) {
         if (user) {
             return res.status(400).json({
                 error: true,
@@ -50,7 +51,6 @@ router.post('/user', upload.single('image'), async function (req, res) {
             });
         }
         let tempPassword;
-
         if (!req.body.password) {
             let randomString = Math.random().toString(36).slice(-8);
             let mailOptions = {
@@ -64,11 +64,9 @@ router.post('/user', upload.single('image'), async function (req, res) {
         } else {
             tempPassword = bcrypt.hashSync(req.body.password, 8);
         }
-        let tempRol;
-        if (!req.body.rol) {
+        let tempRol = req.body.rol;
+        if (!tempRol) {
             tempRol = "usuario";
-        } else {
-            tempRol = req.body.rol;
         }
         if (!req.file) {
             this.urlimage = "";
@@ -95,7 +93,7 @@ router.post('/user', upload.single('image'), async function (req, res) {
                 online: false,
                 rol: tempRol
             },
-            function (err) {
+            function (err,user) {
                 if (err) {
                     return res.status(500).json({
                         error: true,
@@ -126,7 +124,7 @@ router.put('/user/:id', upload.single('image'), async function (req, res) {
         this.urlimage = req.body.image
     }
     let user = await User.findById(id);
-    if (req.body.password !== usuario.password) {
+    if (req.body.password !== user.password) {
         req.body.password = bcrypt.hashSync(req.body.password, 8);
     }
     await User.updateOne({_id: user.id}, req.body);
