@@ -124,7 +124,7 @@ router.put('/user/:id', upload.single('image'), async function (req, res) {
         this.urlimage = req.body.image
     }
     let user = await User.findById(id);
-    if (req.body.password !== user.password) {
+    if (req.body.password && req.body.password !== user.password) {
         req.body.password = bcrypt.hashSync(req.body.password, 8);
     }
     await User.updateOne({_id: user.id}, req.body);
