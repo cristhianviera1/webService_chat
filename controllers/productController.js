@@ -51,12 +51,19 @@ router.post('/', upload.single('image'), async function (req, res) {
         link: bodyProduct.link,
         price: bodyProduct.price,
         observations: bodyProduct.observations
-    })
-
-    return res.status(200).json({
-        error: false,
-        msg: 'Producto creado exitosamente'
-    })
+    },
+    function(err, product) {
+        if (err) {
+            return res.status(500).json({
+                error: true,
+                msg: "No se ha podido crear el producto, por favor intentarlo más tarde"
+            });
+        }
+        return res.status(200).json({
+            error: false,
+            msg: 'Producto creado exitosamente'
+        });
+    });
 })
 
 router.put('/:id', upload.single('image'), async function (req, res) {

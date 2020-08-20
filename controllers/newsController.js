@@ -66,11 +66,18 @@ router.post('/', upload.single('image'), async function (req, res) {
         description: req.body.description,
         image: this.urlimage.toString(),
         link: req.body.link
-    })
-    return res.status(200).json({
-        error: false,
-        msg: 'New creada exitosamente'
-    })
+    },  function(err, news) {
+        if (err) {
+            return res.status(500).json({
+                error: true,
+                msg: "No se ha podido crear la noticia, por favor intentarlo más tarde"
+            });
+        }
+        return res.status(200).json({
+            error: false,
+            msg: 'Noticia creada exitosamente'
+        })
+    });
 })
 
 router.put('/:id', upload.single('image'), async function (req, res) {
