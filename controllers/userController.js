@@ -224,7 +224,7 @@ router.delete('/user/:id', async (req, res) => {
     });
 });
 
-router.post('/usuario/soft', async (req, res) => {
+router.post('/user/softDelete', async (req, res) => {
     if (!req.body.id) {
         return res.status(400).json({
             error: true,
@@ -234,10 +234,18 @@ router.post('/usuario/soft', async (req, res) => {
     User.findById(req.body.id, function (err, user) {
         if (user) {
             User.updateOne({_id: user._id}, {status: false}, function (err, res) {
-                return res.status(200).json({
-                    error: false,
-                    msg: "Usuario creado exitósamente"
-                });
+                if (err) {
+                    return res.status(500).json({
+                        error: true,
+                        msg: "No se pudo eliminar al usuario"
+                    });
+                }
+                if (res) {
+                    return res.status(200).json({
+                        error: false,
+                        msg: "Usuario eliminado exitósamente"
+                    });
+                }
             })
         }
     });

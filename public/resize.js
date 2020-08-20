@@ -11,7 +11,7 @@ class Resize {
         const filename = Resize.filename();
         const filepath = this.filepath(filename);
 
-        await sharp(buffer).resize(300, 300, {
+        await sharp(buffer).resize(640, 640, {
             fit: sharp.fit.inside,
             withoutEnlargement: true
         }).toFile(filepath);
