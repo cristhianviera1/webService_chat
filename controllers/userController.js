@@ -297,8 +297,8 @@ router.post('/user/logout', async (req, res) => {
                 msg: "No se ha podido cerrar la sesión"
             })
         }
-        User.updateOne({_id: user._id}, {online: false}, function (err, res) {
-            if (res) {
+        User.updateOne({_id: user._id}, {online: false}, function (err, response) {
+            if (response) {
                 return res.status(200).json({
                     error: false,
                     msg: "Se ha cerrado sesión"
@@ -323,11 +323,11 @@ router.post('/user/updatePassword', async (req, res) => {
             })
         }
         let hashedPassword = bcrypt.hashSync(req.body.password, 8);
-        User.updateOne({_id: user._id}, {password: hashedPassword}, function (err, res) {
+        User.updateOne({_id: user._id}, {password: hashedPassword}, function (err, response) {
             if (err) {
                 return res.status(404).json({
-                    error:true,
-                    msg:"Algo ha fallado"
+                    error: true,
+                    msg: "Algo ha fallado"
                 });
             }
         })
@@ -354,7 +354,7 @@ router.post('/user/recoverPassword', async (req, res) => {
         }
         let randomString = Math.random().toString(36).slice(-8);
         let newHashedPassword = bcrypt.hashSync(randomString, 8);
-        User.updateOne({email: user.email}, {password: newHashedPassword}, function (err, res) {
+        User.updateOne({email: user.email}, {password: newHashedPassword}, function (err, response) {
             let mailOptions = {
                 from: 'kimerinaservice@gmail.com',
                 to: user.email.toString(),
