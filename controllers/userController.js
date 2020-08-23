@@ -233,7 +233,7 @@ router.post('/user/softDelete', async (req, res) => {
     }
     User.findById(req.body.id, function (err, user) {
         if (user) {
-            User.updateOne({_id: user._id}, {status: false}, function (err, res) {
+            User.updateOne({_id: user._id}, {status: false}, function (err, response) {
                 if (err) {
                     return res.status(500).json({
                         error: true,
